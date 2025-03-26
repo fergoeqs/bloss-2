@@ -1,5 +1,8 @@
 package org.fergoeqs.blps1.controllers;
 
+import jakarta.validation.Valid;
+import org.fergoeqs.blps1.dto.ApplicationRequest;
+import org.fergoeqs.blps1.dto.ApplicationResponse;
 import org.fergoeqs.blps1.models.Application;
 import org.fergoeqs.blps1.services.ApplicationService;
 import org.springframework.http.ResponseEntity;
@@ -18,23 +21,21 @@ public class ApplicationController {
     }
 
     @PostMapping
-    public ResponseEntity<Application> createApplication(
-            @RequestParam Long vacancyId,
-            @RequestParam Long applicantId,
-            @RequestParam(required = false) Long resumeId,
-            @RequestParam(required = false) String coverLetter) {
-        Application application = applicationService.createApplication(vacancyId, applicantId, resumeId, coverLetter);
-        return ResponseEntity.ok(application);
+    public ResponseEntity<ApplicationResponse> createApplication(
+            @Valid @RequestBody ApplicationRequest request) {
+
+        ApplicationResponse response = applicationService.createApplication(request);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/vacancy/{vacancyId}")
-    public ResponseEntity<List<Application>> getApplicationsByVacancyId(@PathVariable Long vacancyId) {
-        List<Application> applications = applicationService.getApplicationsByVacancyId(vacancyId);
+    public ResponseEntity<List<ApplicationResponse>> getApplicationsByVacancyId(@PathVariable Long vacancyId) {
+        List<ApplicationResponse> applications = applicationService.getApplicationsByVacancyId(vacancyId);
         return ResponseEntity.ok(applications);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Application> getApplicationById(@PathVariable Long id) {
+    public ResponseEntity<ApplicationResponse> getApplicationById(@PathVariable Long id) {
         return applicationService.getApplicationById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
