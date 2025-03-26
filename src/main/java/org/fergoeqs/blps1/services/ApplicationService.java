@@ -153,4 +153,18 @@ public class ApplicationService {
 
         return matches > keywords.size() / 2;
     }
+
+    public ApplicationResponse addCoverLetter(Long applicationId, String coverLetter) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+        if (application.getStatus() == ApplicationStatus.COVER_LETTER_REQUIRED) {
+            application.setCoverLetter(coverLetter);
+            application.setStatus(ApplicationStatus.PENDING);
+            Application updated = applicationRepository.save(application);
+            return mapToResponse(updated);
+        } else {
+            throw new IllegalStateException("Cover letter is not required for this application");
+        }
+    }
 }

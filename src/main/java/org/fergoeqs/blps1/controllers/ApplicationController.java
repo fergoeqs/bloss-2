@@ -3,7 +3,6 @@ package org.fergoeqs.blps1.controllers;
 import jakarta.validation.Valid;
 import org.fergoeqs.blps1.dto.ApplicationRequest;
 import org.fergoeqs.blps1.dto.ApplicationResponse;
-import org.fergoeqs.blps1.models.Application;
 import org.fergoeqs.blps1.services.ApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,5 +38,18 @@ public class ApplicationController {
         return applicationService.getApplicationById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/cover-letter")
+    public ResponseEntity<ApplicationResponse> addCoverLetter(
+            @PathVariable Long id,
+            @RequestParam String coverLetter) {
+
+        if (coverLetter == null || coverLetter.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        ApplicationResponse response = applicationService.addCoverLetter(id, coverLetter);
+        return ResponseEntity.ok(response);
     }
 }
