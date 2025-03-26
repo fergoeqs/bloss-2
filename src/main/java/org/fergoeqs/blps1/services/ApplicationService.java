@@ -48,19 +48,27 @@ public class ApplicationService {
 
         String warning = null;
         if (vacancy.isResumeRequired()) {
-            if (request.resumeId() == null) {
+            Resume resume;
+            if (applicant.getResumes() == null || applicant.getResumes().isEmpty()) {
                 application.setStatus(ApplicationStatus.RESUME_REQUIRED);
             } else {
-                Resume resume = resumeRepository.findById(request.resumeId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
+                if (applicant.getResumes().size() > 1) {
+                    if (request.resumeId() == null) {
+                        resume = applicant.getResumes().get(0);
+                    } else {
+                        resume = resumeRepository.findById(request.resumeId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
 
-                if (!resume.getApplicant().getId().equals(applicant.getId())) {
-                    throw new SecurityException("Resume doesn't belong to applicant");
+                        if (!resume.getApplicant().getId().equals(applicant.getId())) {
+                            throw new SecurityException("Resume doesn't belong to applicant");
+                        }
+                    }
+                } else {
+                    resume = applicant.getResumes().get(0);
                 }
-
                 application.setResume(resume);
                 if (!isResumeMatching(resume, vacancy)) {
-                    warning = "Резюме частично соответствует требованиям вакансии";
+                    warning = "The resume does not meet the requirements of the vacancy. The application may be rejected.";
                 }
             }
         }
@@ -129,7 +137,7 @@ public class ApplicationService {
                 application.getVacancy().getTitle(),
                 application.getApplicant().getName(),
                 application.getStatus().equals(ApplicationStatus.PENDING_WITH_WARNING) ?
-                        "Резюме частично соответствует требованиям" : null,
+                        "The resume partially meets the requirements of the vacancy" : null,
                 application.getCreatedAt() != null ?
                         application.getCreatedAt() : LocalDateTime.now()
         );
