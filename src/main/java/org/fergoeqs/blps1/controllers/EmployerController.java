@@ -1,5 +1,6 @@
 package org.fergoeqs.blps1.controllers;
 
+import org.fergoeqs.blps1.dto.ApplicationResponse;
 import org.fergoeqs.blps1.models.Application;
 import org.fergoeqs.blps1.services.ApplicationService;
 import org.springframework.http.ResponseEntity;
@@ -18,20 +19,20 @@ public class EmployerController {
     }
 
     @GetMapping("/vacancies/{vacancyId}/applications")
-    public ResponseEntity<List<Application>> getApplicationsByVacancyId(@PathVariable Long vacancyId) {
-        List<Application> applications = applicationService.getApplicationsByVacancyId(vacancyId);
+    public ResponseEntity<List<ApplicationResponse>> getApplicationsByVacancyId(@PathVariable Long vacancyId) {
+        List<ApplicationResponse> applications = applicationService.getApplicationsByVacancyId(vacancyId);
         return ResponseEntity.ok(applications);
     }
 
     @PutMapping("/applications/{id}/accept")
-    public ResponseEntity<Application> acceptApplication(@PathVariable Long id) {
-        Application updatedApplication = applicationService.acceptApplication(id);
+    public ResponseEntity<ApplicationResponse> acceptApplication(@PathVariable Long id) {
+        ApplicationResponse updatedApplication = applicationService.acceptApplication(id);
         return ResponseEntity.ok(updatedApplication);
     }
 
     @PutMapping("/applications/{id}/reject")
-    public ResponseEntity<Application> rejectApplication(@PathVariable Long id) {
-        Application updatedApplication = applicationService.rejectApplication(id);
+    public ResponseEntity<ApplicationResponse> rejectApplication(@PathVariable Long id) {
+        ApplicationResponse updatedApplication = applicationService.rejectApplication(id);
         return ResponseEntity.ok(updatedApplication);
     }
 }
