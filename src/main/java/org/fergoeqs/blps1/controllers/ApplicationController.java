@@ -21,7 +21,7 @@ public class ApplicationController {
 
     @PostMapping
     public ResponseEntity<ApplicationResponse> createApplication(
-            @Valid @RequestBody ApplicationRequest request) {
+            @Valid @RequestBody ApplicationRequest request) throws Exception {
 
         ApplicationResponse response = applicationService.createApplication(request);
         return ResponseEntity.ok(response);
