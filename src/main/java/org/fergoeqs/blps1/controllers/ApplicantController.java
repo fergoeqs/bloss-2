@@ -1,6 +1,9 @@
 package org.fergoeqs.blps1.controllers;
 
 import jakarta.validation.Valid;
+import org.fergoeqs.blps1.dto.ApplicantRequest;
+import org.fergoeqs.blps1.dto.ApplicantResponse;
+import org.fergoeqs.blps1.dto.ResumeResponse;
 import org.fergoeqs.blps1.models.Applicant;
 import org.fergoeqs.blps1.models.Resume;
 import org.fergoeqs.blps1.services.ApplicantService;
@@ -20,9 +23,10 @@ public class ApplicantController {
     }
 
     @PostMapping
-    public ResponseEntity<Applicant> createApplicant(@Valid @RequestBody Applicant applicant) {
-        Applicant createdApplicant = applicantService.createApplicant(applicant);
-        return ResponseEntity.ok(createdApplicant);
+    public ResponseEntity<ApplicantResponse> createApplicant(
+            @Valid @RequestBody ApplicantRequest request) {
+        ApplicantResponse response = applicantService.createApplicant(request);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -39,8 +43,8 @@ public class ApplicantController {
     }
 
     @GetMapping("/{id}/resumes")
-    public ResponseEntity<List<Resume>> getResumesByApplicantId(@PathVariable Long id) {
-        List<Resume> resumes = applicantService.getResumesByApplicantId(id);
+    public ResponseEntity<List<ResumeResponse>> getResumesByApplicantId(@PathVariable Long id) {
+        List<ResumeResponse> resumes = applicantService.getResumesByApplicantId(id);
         return ResponseEntity.ok(resumes);
     }
 }
