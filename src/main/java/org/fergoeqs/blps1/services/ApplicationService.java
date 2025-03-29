@@ -35,7 +35,7 @@ public class ApplicationService {
         this.resumeRepository = resumeRepository;
     }
 
-    public ApplicationResponse createApplication(ApplicationRequest request) {
+    public ApplicationResponse createApplication(ApplicationRequest request) throws Exception {
         Application application = new Application();
 
         Vacancy vacancy = vacancyRepository.findById(request.vacancyId())
@@ -51,6 +51,7 @@ public class ApplicationService {
             Resume resume;
             if (applicant.getResumes() == null || applicant.getResumes().isEmpty()) {
                 application.setStatus(ApplicationStatus.RESUME_REQUIRED);
+                throw new Exception("Cover letter required");
             } else {
                 if (applicant.getResumes().size() > 1) {
                     if (request.resumeId() == null) {
@@ -60,7 +61,7 @@ public class ApplicationService {
                                 .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
 
                         if (!resume.getApplicant().getId().equals(applicant.getId())) {
-                            throw new SecurityException("Resume doesn't belong to applicant");
+                            throw new Exception("Resume doesn't belong to applicant");
                         }
                     }
                 } else {
@@ -76,6 +77,7 @@ public class ApplicationService {
         if (vacancy.isCoverLetterRequired() &&
                 (request.coverLetter() == null || request.coverLetter().isBlank())) {
             application.setStatus(ApplicationStatus.COVER_LETTER_REQUIRED);
+            throw new Exception("Cover letter required");
         } else {
             application.setCoverLetter(request.coverLetter());
         }
@@ -165,14 +167,9 @@ public class ApplicationService {
     public ApplicationResponse addCoverLetter(Long applicationId, String coverLetter) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
-
-        if (application.getStatus() == ApplicationStatus.COVER_LETTER_REQUIRED) {
-            application.setCoverLetter(coverLetter);
-            application.setStatus(ApplicationStatus.PENDING);
-            Application updated = applicationRepository.save(application);
-            return mapToResponse(updated);
-        } else {
-            throw new IllegalStateException("Cover letter is not required for this application");
-        }
+        application.setCoverLetter(coverLetter);
+        application.setStatus(ApplicationStatus.PENDING);
+        Application updated = applicationRepository.save(application);
+        return mapToResponse(updated);
     }
 }
