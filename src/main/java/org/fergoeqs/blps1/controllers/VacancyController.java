@@ -27,9 +27,30 @@ public class VacancyController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("{id}/open")
+    public ResponseEntity<Vacancy> openVacancy(@PathVariable Long id) {
+        return ResponseEntity.ok(vacancyService.openVacancy(id));
+    }
+
+    @PutMapping("{id}/close")
+    public ResponseEntity<Vacancy> closeVacancy(@PathVariable Long id) {
+        return ResponseEntity.ok(vacancyService.closeVacancy(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteVacancy(@PathVariable Long id) {
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping
     public ResponseEntity<List<Vacancy>> getAllVacancies() {
         List<Vacancy> vacancies = vacancyService.getAllVacancies();
+        return ResponseEntity.ok(vacancies);
+    }
+
+    @GetMapping("/actual")
+    public ResponseEntity<List<Vacancy>> getOpenVacancies() {
+        List<Vacancy> vacancies = vacancyService.getAllByStatusIsOpen();
         return ResponseEntity.ok(vacancies);
     }
 

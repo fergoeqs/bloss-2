@@ -2,6 +2,7 @@ package org.fergoeqs.blps1.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.fergoeqs.blps1.models.enums.VacancyStatus;
 
 @Entity
 @Table(name = "vacancies")
@@ -25,4 +26,7 @@ public class Vacancy {
 
     @Column(columnDefinition = "TEXT")
     private String keywords;
+
+    @Column(nullable = false)
+    private VacancyStatus status;
 }

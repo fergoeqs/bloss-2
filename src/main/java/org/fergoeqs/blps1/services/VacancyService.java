@@ -3,12 +3,15 @@ package org.fergoeqs.blps1.services;
 import org.fergoeqs.blps1.dto.VacancyRequest;
 import org.fergoeqs.blps1.dto.VacancyResponse;
 import org.fergoeqs.blps1.models.Vacancy;
+import org.fergoeqs.blps1.models.enums.VacancyStatus;
 import org.fergoeqs.blps1.repositories.VacancyRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 @Service
 public class VacancyService {
 
@@ -18,12 +21,14 @@ public class VacancyService {
         this.vacancyRepository = vacancyRepository;
     }
 
+    @Transactional(readOnly = true)
     public VacancyResponse createVacancy(VacancyRequest request) {
         if (request.title() == null || request.title().isBlank()) {
             throw new IllegalArgumentException("Title cannot be empty");
         }
 
         Vacancy vacancy = new Vacancy();
+        vacancy.setStatus(VacancyStatus.OPEN);
         vacancy.setTitle(request.title());
         vacancy.setDescription(request.description());
         vacancy.setResumeRequired(request.isResumeRequired());
@@ -42,8 +47,33 @@ public class VacancyService {
                 savedVacancy.isCoverLetterRequired());
     }
 
+    @Transactional
+    public void deleteVacancy(Long id) {
+        vacancyRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Vacancy openVacancy(Long id) {
+        Vacancy vacancy = vacancyRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException("Vacancy not found"));
+        vacancy.setStatus(VacancyStatus.OPEN);
+        return vacancy;
+    }
+
+    @Transactional
+    public Vacancy closeVacancy(Long id) {
+        Vacancy vacancy = vacancyRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException("Vacancy not found"));
+        vacancy.setStatus(VacancyStatus.CLOSED);
+        return vacancy;
+    }
+
     public List<Vacancy> getAllVacancies() {
         return vacancyRepository.findAll();
+    }
+
+    public List<Vacancy> getAllByStatusIsOpen() {
+        return vacancyRepository.findAllByStatus(VacancyStatus.OPEN);
     }
 
     public Optional<Vacancy> getVacancyById(Long id) {
