@@ -9,6 +9,7 @@ import org.fergoeqs.blps1.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Transactional(readOnly = true)
 @Service
 public class ApplicationService {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationService.class);
@@ -35,6 +37,7 @@ public class ApplicationService {
         this.resumeRepository = resumeRepository;
     }
 
+    @Transactional
     public ApplicationResponse createApplication(ApplicationRequest request) throws Exception {
         Application application = new Application();
 
@@ -92,6 +95,11 @@ public class ApplicationService {
         return mapToResponse(saved);
     }
 
+    @Transactional
+    public void deleteApplication(Long applicationId){
+        applicationRepository.deleteById(applicationId);
+    }
+
     public List<ApplicationResponse> getApplicationsByVacancyId(Long vacancyId) {
         return applicationRepository.findByVacancyId(vacancyId)
                 .stream()
@@ -104,6 +112,7 @@ public class ApplicationService {
                 .map(this::mapToResponse);
     }
 
+    @Transactional
     public ApplicationResponse acceptApplication(Long applicationId) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
@@ -118,6 +127,7 @@ public class ApplicationService {
         return mapToResponse(updated);
     }
 
+    @Transactional
     public ApplicationResponse rejectApplication(Long applicationId) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
@@ -164,6 +174,7 @@ public class ApplicationService {
         return matches > keywords.size() / 2;
     }
 
+    @Transactional
     public ApplicationResponse addCoverLetter(Long applicationId, String coverLetter) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
