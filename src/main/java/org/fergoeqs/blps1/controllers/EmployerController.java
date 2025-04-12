@@ -3,6 +3,8 @@ package org.fergoeqs.blps1.controllers;
 import org.fergoeqs.blps1.dto.ApplicationResponse;
 import org.fergoeqs.blps1.models.Application;
 import org.fergoeqs.blps1.services.ApplicationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +21,11 @@ public class EmployerController {
     }
 
     @GetMapping("/vacancies/{vacancyId}/applications")
-    public ResponseEntity<List<ApplicationResponse>> getApplicationsByVacancyId(@PathVariable Long vacancyId) {
-        List<ApplicationResponse> applications = applicationService.getApplicationsByVacancyId(vacancyId);
-        return ResponseEntity.ok(applications);
+    public ResponseEntity<?> getApplicationsByVacancyId(@PathVariable Long vacancyId,
+                                                                    @RequestParam(defaultValue = "0") int page,
+                                                                    @RequestParam(defaultValue = "10") int size) {
+        Page<ApplicationResponse> applications = applicationService.getApplicationsByVacancyId(vacancyId, PageRequest.of(page, size));
+        return ResponseEntity.ok(applications.getContent());
     }
 
     @PutMapping("/applications/{id}/accept")
