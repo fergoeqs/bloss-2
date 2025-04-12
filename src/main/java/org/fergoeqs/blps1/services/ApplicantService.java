@@ -8,6 +8,8 @@ import org.fergoeqs.blps1.models.Applicant;
 import org.fergoeqs.blps1.models.Resume;
 import org.fergoeqs.blps1.repositories.ApplicantRepository;
 import org.fergoeqs.blps1.repositories.ResumeRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,12 +64,11 @@ public class ApplicantService {
     }
 
 
-    public List<ResumeResponse> getResumesByApplicantId(Long applicantId) {
-        Applicant applicant = applicantRepository.findById(applicantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Applicant not found"));
-
-        return applicant.getResumes().stream()
-                .map(resume -> new ResumeResponse(resume.getId(), resume.getContent()))
-                .toList();
+    public Page<ResumeResponse> getResumesByApplicantId(Long applicantId, Pageable pageable) {
+        if (!applicantRepository.existsById(applicantId)) {
+            throw new ResourceNotFoundException("Applicant not found");
+        }
+        return resumeRepository.findByApplicantId(applicantId, pageable)
+                .map(resume -> new ResumeResponse(resume.getId(), resume.getContent()));
     }
 }

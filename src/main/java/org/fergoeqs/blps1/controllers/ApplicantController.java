@@ -7,6 +7,8 @@ import org.fergoeqs.blps1.dto.ResumeResponse;
 import org.fergoeqs.blps1.models.Applicant;
 import org.fergoeqs.blps1.models.Resume;
 import org.fergoeqs.blps1.services.ApplicantService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,12 @@ public class ApplicantController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteApplicant(@PathVariable Long id) {
+        applicantService.deleteApplicant(id);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Applicant> getApplicantById(@PathVariable Long id) {
         return applicantService.getApplicantById(id)
@@ -43,8 +51,10 @@ public class ApplicantController {
     }
 
     @GetMapping("/{id}/resumes")
-    public ResponseEntity<List<ResumeResponse>> getResumesByApplicantId(@PathVariable Long id) {
-        List<ResumeResponse> resumes = applicantService.getResumesByApplicantId(id);
-        return ResponseEntity.ok(resumes);
+    public ResponseEntity<?> getResumesByApplicantId(@PathVariable Long id,
+                                                                        @RequestParam(defaultValue = "0") int page,
+                                                                        @RequestParam(defaultValue = "10") int size) {
+        Page<ResumeResponse> resumes = applicantService.getResumesByApplicantId(id, PageRequest.of(page, size));
+        return ResponseEntity.ok(resumes.getContent());
     }
 }
