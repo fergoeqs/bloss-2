@@ -8,5 +8,6 @@ public record ApplicationResponse(
         String vacancyTitle,
         String applicantName,
         String warningMessage,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        String coverLetter
 ) {}

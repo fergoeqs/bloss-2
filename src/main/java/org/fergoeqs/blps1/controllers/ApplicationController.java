@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.fergoeqs.blps1.dto.ApplicationRequest;
 import org.fergoeqs.blps1.dto.ApplicationResponse;
 import org.fergoeqs.blps1.services.ApplicationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,10 +29,18 @@ public class ApplicationController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApplicationResponse> deleteApplication(@PathVariable Long id) throws Exception {
+        applicationService.deleteApplication(id);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/vacancy/{vacancyId}")
-    public ResponseEntity<List<ApplicationResponse>> getApplicationsByVacancyId(@PathVariable Long vacancyId) {
-        List<ApplicationResponse> applications = applicationService.getApplicationsByVacancyId(vacancyId);
-        return ResponseEntity.ok(applications);
+    public ResponseEntity<?> getApplicationsByVacancyId(@PathVariable Long vacancyId,
+                                                        @RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int size) {
+        Page<ApplicationResponse> applications = applicationService.getApplicationsByVacancyId(vacancyId, PageRequest.of(page, size));
+        return ResponseEntity.ok(applications.getContent());
     }
 
     @GetMapping("/{id}")
@@ -43,7 +53,7 @@ public class ApplicationController {
     @PatchMapping("/{id}/cover-letter")
     public ResponseEntity<ApplicationResponse> addCoverLetter(
             @PathVariable Long id,
-            @RequestParam String coverLetter) {
+            @RequestBody String coverLetter) {
 
         if (coverLetter == null || coverLetter.isBlank()) {
             return ResponseEntity.badRequest().build();
