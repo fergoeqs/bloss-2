@@ -7,6 +7,8 @@ import org.fergoeqs.blps1.models.enums.VacancyStatus;
 import org.fergoeqs.blps1.repositories.VacancyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +23,7 @@ public class VacancyService {
         this.vacancyRepository = vacancyRepository;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public VacancyResponse createVacancy(VacancyRequest request) {
         if (request.title() == null || request.title().isBlank()) {
             throw new IllegalArgumentException("Title cannot be empty");
@@ -31,8 +33,8 @@ public class VacancyService {
         vacancy.setStatus(VacancyStatus.OPEN);
         vacancy.setTitle(request.title());
         vacancy.setDescription(request.description());
-        vacancy.setResumeRequired(request.isResumeRequired());
-        vacancy.setCoverLetterRequired(request.isCoverLetterRequired());
+        vacancy.setResumeRequired(request.resumeRequired());
+        vacancy.setCoverLetterRequired(request.coverLetterRequired());
         vacancy.setKeywords(request.keywords());
 
 
@@ -68,12 +70,12 @@ public class VacancyService {
         return vacancy;
     }
 
-    public List<Vacancy> getAllVacancies() {
-        return vacancyRepository.findAll();
+    public Page<Vacancy> getAllVacancies(Pageable pageable) {
+        return vacancyRepository.findAll(pageable);
     }
 
-    public List<Vacancy> getAllByStatusIsOpen() {
-        return vacancyRepository.findAllByStatus(VacancyStatus.OPEN);
+    public Page<Vacancy> getAllByStatusIsOpen(Pageable pageable) {
+        return vacancyRepository.findAllByStatus(VacancyStatus.OPEN, pageable);
     }
 
     public Optional<Vacancy> getVacancyById(Long id) {

@@ -5,6 +5,8 @@ import org.fergoeqs.blps1.dto.VacancyRequest;
 import org.fergoeqs.blps1.dto.VacancyResponse;
 import org.fergoeqs.blps1.models.Vacancy;
 import org.fergoeqs.blps1.services.VacancyService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,31 +29,34 @@ public class VacancyController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("{id}/open")
+    @PatchMapping("{id}/open")
     public ResponseEntity<Vacancy> openVacancy(@PathVariable Long id) {
         return ResponseEntity.ok(vacancyService.openVacancy(id));
     }
 
-    @PutMapping("{id}/close")
+    @PatchMapping("{id}/close")
     public ResponseEntity<Vacancy> closeVacancy(@PathVariable Long id) {
         return ResponseEntity.ok(vacancyService.closeVacancy(id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteVacancy(@PathVariable Long id) {
+        vacancyService.deleteVacancy(id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<Vacancy>> getAllVacancies() {
-        List<Vacancy> vacancies = vacancyService.getAllVacancies();
-        return ResponseEntity.ok(vacancies);
+    public ResponseEntity<?> getAllVacancies(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size) {
+        Page<Vacancy> vacancies = vacancyService.getAllVacancies(PageRequest.of(page, size));
+        return ResponseEntity.ok(vacancies.getContent());
     }
 
     @GetMapping("/actual")
-    public ResponseEntity<List<Vacancy>> getOpenVacancies() {
-        List<Vacancy> vacancies = vacancyService.getAllByStatusIsOpen();
-        return ResponseEntity.ok(vacancies);
+    public ResponseEntity<?> getOpenVacancies(@RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "10") int size) {
+        Page<Vacancy> vacancies = vacancyService.getAllByStatusIsOpen(PageRequest.of(page, size));
+        return ResponseEntity.ok(vacancies.getContent());
     }
 
     @GetMapping("/{id}")
