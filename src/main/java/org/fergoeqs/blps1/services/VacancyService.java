@@ -29,7 +29,14 @@ public class VacancyService {
     }
 
     @Transactional
-    public VacancyResponse createVacancy(VacancyRequest request) {
+    public VacancyResponse createVacancy(VacancyRequest request, Long userId) {
+        Employer employer = employerRepository.findByUserId(userId)
+                .orElseThrow(() -> new AccessDeniedException("User is not an employer"));
+
+        if (employer.getRole() != Role.EMPLOYER_CREATOR) {
+            throw new AccessDeniedException("Only creators can create vacancies");
+        }
+
         if (request.title() == null || request.title().isBlank()) {
             throw new IllegalArgumentException("Title cannot be empty");
         }
