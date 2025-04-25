@@ -1,11 +1,11 @@
-package org.fergoeqs.blps1.models;
+package org.fergoeqs.blps1.models.applicantdb;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "resumes")
+@Table(name = "resumes", schema = "applicant_schema")
 @Data
 public class Resume {
     @Id

@@ -1,11 +1,11 @@
-package org.fergoeqs.blps1.models;
+package org.fergoeqs.blps1.models.employerdb;
 
 
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "employers")
+@Table(name = "employers", schema = "employer_schema")
 @Data
 public class Employer {
     @Id

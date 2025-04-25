@@ -3,9 +3,15 @@ package org.fergoeqs.blps1.services;
 import org.fergoeqs.blps1.dto.ApplicationRequest;
 import org.fergoeqs.blps1.dto.ApplicationResponse;
 import org.fergoeqs.blps1.exceptions.ResourceNotFoundException;
-import org.fergoeqs.blps1.models.*;
+import org.fergoeqs.blps1.models.applicantdb.Applicant;
+import org.fergoeqs.blps1.models.applicantdb.Application;
+import org.fergoeqs.blps1.models.applicantdb.Resume;
+import org.fergoeqs.blps1.models.employerdb.Vacancy;
 import org.fergoeqs.blps1.models.enums.ApplicationStatus;
-import org.fergoeqs.blps1.repositories.*;
+import org.fergoeqs.blps1.repositories.applicantdb.ApplicantRepository;
+import org.fergoeqs.blps1.repositories.applicantdb.ApplicationRepository;
+import org.fergoeqs.blps1.repositories.applicantdb.ResumeRepository;
+import org.fergoeqs.blps1.repositories.employerdb.VacancyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -15,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -44,12 +49,12 @@ public class ApplicationService {
     public ApplicationResponse createApplication(ApplicationRequest request) throws Exception {
         Application application = new Application();
 
-        Vacancy vacancy = vacancyRepository.findById(request.vacancyId())
+        Vacancy vacancy = vacancyRepository.findById(request.vacancyId()) //потом подумать
                 .orElseThrow(() -> new ResourceNotFoundException("Vacancy not found"));
         Applicant applicant = applicantRepository.findById(request.applicantId())
                 .orElseThrow(() -> new ResourceNotFoundException("Applicant not found"));
 
-        application.setVacancy(vacancy);
+        application.setVacancyId(request.vacancyId());
         application.setApplicant(applicant);
 
         String warning = null;
@@ -120,10 +125,11 @@ public class ApplicationService {
 
         application.setStatus(ApplicationStatus.ACCEPTED);
         Application updated = applicationRepository.save(application);
+        Vacancy vacancy = vacancyRepository.findById(updated.getVacancyId()).orElseThrow();
 
-        logger.info("Applicant {} accepted for vacancy {}",
+                logger.info("Applicant {} accepted for vacancy {}",
                 updated.getApplicant().getName(),
-                updated.getVacancy().getTitle());
+                vacancy.getTitle());
 
         return mapToResponse(updated);
     }
@@ -135,19 +141,21 @@ public class ApplicationService {
 
         application.setStatus(ApplicationStatus.REJECTED);
         Application updated = applicationRepository.save(application);
+        Vacancy vacancy = vacancyRepository.findById(updated.getVacancyId()).orElseThrow();
 
         logger.info("Applicant {} rejected for vacancy {}",
                 updated.getApplicant().getName(),
-                updated.getVacancy().getTitle());
+                vacancy.getTitle());
 
         return mapToResponse(updated);
     }
 
     private ApplicationResponse mapToResponse(Application application) {
+        Vacancy vacancy = vacancyRepository.findById(application.getVacancyId()).orElseThrow();
         return new ApplicationResponse(
                 application.getId(),
                 application.getStatus().name(),
-                application.getVacancy().getTitle(),
+                vacancy.getTitle(),
                 application.getApplicant().getName(),
                 application.getStatus().equals(ApplicationStatus.PENDING_WITH_WARNING) ?
                         "The resume partially meets the requirements of the vacancy" : null,

@@ -1,15 +1,16 @@
-package org.fergoeqs.blps1.models;
+package org.fergoeqs.blps1.models.employerdb;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.fergoeqs.blps1.models.applicantdb.Application;
 import org.fergoeqs.blps1.models.enums.VacancyStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "vacancies")
+@Table(name = "vacancies", schema = "employer_schema")
 @Data
 public class Vacancy {
     @Id
@@ -34,7 +35,11 @@ public class Vacancy {
     @Column(nullable = false)
     private VacancyStatus status;
 
-    @OneToMany(mappedBy = "vacancy", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Application> applications = new ArrayList<>();
+//    @OneToMany(mappedBy = "vacancy", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonIgnore
+//    private List<Application> applications = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "employer_id", nullable = false)
+    private Employer employer;
 }

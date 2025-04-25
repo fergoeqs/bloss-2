@@ -1,4 +1,4 @@
-package org.fergoeqs.blps1.models;
+package org.fergoeqs.blps1.models.applicantdb;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 @Entity
-@Table(name = "applicants")
+@Table(name = "applicants", schema = "applicant_schema")
 @Data
 public class Applicant {
     @Id

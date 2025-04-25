@@ -1,6 +1,6 @@
 package org.fergoeqs.blps1.security.utils;
 
-import org.fergoeqs.blps1.repositories.UserRepository;
+import org.fergoeqs.blps1.repositories.securitydb.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -2,15 +2,14 @@ package org.fergoeqs.blps1.services;
 
 import org.fergoeqs.blps1.dto.VacancyRequest;
 import org.fergoeqs.blps1.dto.VacancyResponse;
-import org.fergoeqs.blps1.models.Vacancy;
+import org.fergoeqs.blps1.models.employerdb.Vacancy;
 import org.fergoeqs.blps1.models.enums.VacancyStatus;
-import org.fergoeqs.blps1.repositories.VacancyRepository;
+import org.fergoeqs.blps1.repositories.employerdb.VacancyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)

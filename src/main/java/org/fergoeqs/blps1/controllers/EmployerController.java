@@ -1,14 +1,11 @@
 package org.fergoeqs.blps1.controllers;
 
 import org.fergoeqs.blps1.dto.ApplicationResponse;
-import org.fergoeqs.blps1.models.Application;
 import org.fergoeqs.blps1.services.ApplicationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/employer")
