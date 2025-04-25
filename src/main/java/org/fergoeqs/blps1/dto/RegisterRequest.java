@@ -9,5 +9,7 @@ public record RegisterRequest(
         @Email(message = "Invalid email format") String email,
         @NotBlank(message = "Password cannot be blank") String password,
         @NotBlank(message = "Name cannot be blank") String name,
-        @NotNull(message = "Role cannot be null") Role role
+        @NotNull(message = "Role cannot be null") Role role,
+        String companyName,  // EMPLOYER_*
+        String contactInfo   // EMPLOYER_* и USER
 ) {}

@@ -6,16 +6,19 @@ import org.fergoeqs.blps1.exceptions.ResourceNotFoundException;
 import org.fergoeqs.blps1.models.applicantdb.Applicant;
 import org.fergoeqs.blps1.models.applicantdb.Application;
 import org.fergoeqs.blps1.models.applicantdb.Resume;
+import org.fergoeqs.blps1.models.employerdb.Employer;
 import org.fergoeqs.blps1.models.employerdb.Vacancy;
 import org.fergoeqs.blps1.models.enums.ApplicationStatus;
 import org.fergoeqs.blps1.repositories.applicantdb.ApplicantRepository;
 import org.fergoeqs.blps1.repositories.applicantdb.ApplicationRepository;
 import org.fergoeqs.blps1.repositories.applicantdb.ResumeRepository;
+import org.fergoeqs.blps1.repositories.employerdb.EmployerRepository;
 import org.fergoeqs.blps1.repositories.employerdb.VacancyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,15 +37,17 @@ public class ApplicationService {
     private final VacancyRepository vacancyRepository;
     private final ApplicantRepository applicantRepository;
     private final ResumeRepository resumeRepository;
+    private final EmployerRepository employerRepository;
 
     public ApplicationService(ApplicationRepository applicationRepository,
                               VacancyRepository vacancyRepository,
                               ApplicantRepository applicantRepository,
-                              ResumeRepository resumeRepository) {
+                              ResumeRepository resumeRepository, EmployerRepository employerRepository) {
         this.applicationRepository = applicationRepository;
         this.vacancyRepository = vacancyRepository;
         this.applicantRepository = applicantRepository;
         this.resumeRepository = resumeRepository;
+        this.employerRepository = employerRepository;
     }
 
     @Transactional
@@ -119,9 +124,13 @@ public class ApplicationService {
     }
 
     @Transactional
-    public ApplicationResponse acceptApplication(Long applicationId) {
+    public ApplicationResponse acceptApplication(Long applicationId, Long userId) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+        Employer reviewer = employerRepository.findByUserId(userId)
+                .orElseThrow(() -> new AccessDeniedException("Not an employer"));
+
 
         application.setStatus(ApplicationStatus.ACCEPTED);
         Application updated = applicationRepository.save(application);
@@ -135,9 +144,12 @@ public class ApplicationService {
     }
 
     @Transactional
-    public ApplicationResponse rejectApplication(Long applicationId) {
+    public ApplicationResponse rejectApplication(Long applicationId, Long userId) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+        Employer reviewer = employerRepository.findByUserId(userId)
+                .orElseThrow(() -> new AccessDeniedException("Not an employer"));
 
         application.setStatus(ApplicationStatus.REJECTED);
         Application updated = applicationRepository.save(application);

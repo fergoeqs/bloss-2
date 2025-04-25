@@ -20,7 +20,6 @@ public class ApplicationController {
     public ApplicationController(ApplicationService applicationService) {
         this.applicationService = applicationService;
     }
-
     @PostMapping
     public ResponseEntity<ApplicationResponse> createApplication(
             @Valid @RequestBody ApplicationRequest request) throws Exception {

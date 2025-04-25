@@ -4,10 +4,13 @@ import jakarta.validation.Valid;
 import org.fergoeqs.blps1.dto.VacancyRequest;
 import org.fergoeqs.blps1.dto.VacancyResponse;
 import org.fergoeqs.blps1.models.employerdb.Vacancy;
+import org.fergoeqs.blps1.models.securitydb.User;
 import org.fergoeqs.blps1.services.VacancyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,9 +24,11 @@ public class VacancyController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('EMPLOYER_CREATOR')")
     public ResponseEntity<VacancyResponse> createVacancy(
-            @Valid @RequestBody VacancyRequest request) {
-        VacancyResponse response = vacancyService.createVacancy(request);
+            @Valid @RequestBody VacancyRequest request,
+            @AuthenticationPrincipal User user) {
+        VacancyResponse response = vacancyService.createVacancy(request, user.getId());
         return ResponseEntity.ok(response);
     }
 
