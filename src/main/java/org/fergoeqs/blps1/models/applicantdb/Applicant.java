@@ -23,4 +23,7 @@ public class Applicant {
     @OneToMany(mappedBy = "applicant", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Resume> resumes;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 }

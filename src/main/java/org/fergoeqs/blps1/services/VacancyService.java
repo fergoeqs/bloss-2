@@ -2,9 +2,13 @@ package org.fergoeqs.blps1.services;
 
 import org.fergoeqs.blps1.dto.VacancyRequest;
 import org.fergoeqs.blps1.dto.VacancyResponse;
+import org.fergoeqs.blps1.models.employerdb.Employer;
 import org.fergoeqs.blps1.models.employerdb.Vacancy;
+import org.fergoeqs.blps1.models.enums.Role;
 import org.fergoeqs.blps1.models.enums.VacancyStatus;
+import org.fergoeqs.blps1.repositories.employerdb.EmployerRepository;
 import org.fergoeqs.blps1.repositories.employerdb.VacancyRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
@@ -17,13 +21,23 @@ import java.util.Optional;
 public class VacancyService {
 
     private final VacancyRepository vacancyRepository;
+    private final EmployerRepository employerRepository;
 
-    public VacancyService(VacancyRepository vacancyRepository) {
+
+    public VacancyService(VacancyRepository vacancyRepository, EmployerRepository employerRepository) {
         this.vacancyRepository = vacancyRepository;
+        this.employerRepository = employerRepository;
     }
 
     @Transactional
-    public VacancyResponse createVacancy(VacancyRequest request) {
+    public VacancyResponse createVacancy(VacancyRequest request, Long userId) {
+        Employer employer = employerRepository.findByUserId(userId)
+                .orElseThrow(() -> new AccessDeniedException("User is not an employer"));
+
+        if (employer.getRole() != Role.EMPLOYER_CREATOR) {
+            throw new AccessDeniedException("Only creators can create vacancies");
+        }
+
         if (request.title() == null || request.title().isBlank()) {
             throw new IllegalArgumentException("Title cannot be empty");
         }

@@ -1,14 +1,18 @@
 package org.fergoeqs.blps1.controllers;
 
 import org.fergoeqs.blps1.dto.ApplicationResponse;
+import org.fergoeqs.blps1.models.securitydb.User;
 import org.fergoeqs.blps1.services.ApplicationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/employer")
+@PreAuthorize("hasRole('EMPLOYER_REVIEWER')")
 public class EmployerController {
 
     private final ApplicationService applicationService;
@@ -25,15 +29,22 @@ public class EmployerController {
         return ResponseEntity.ok(applications.getContent());
     }
 
+
     @PutMapping("/applications/{id}/accept")
-    public ResponseEntity<ApplicationResponse> acceptApplication(@PathVariable Long id) {
-        ApplicationResponse updatedApplication = applicationService.acceptApplication(id);
+    public ResponseEntity<ApplicationResponse> acceptApplication(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+
+        ApplicationResponse updatedApplication = applicationService.acceptApplication(id, user.getId());
         return ResponseEntity.ok(updatedApplication);
     }
 
     @PutMapping("/applications/{id}/reject")
-    public ResponseEntity<ApplicationResponse> rejectApplication(@PathVariable Long id) {
-        ApplicationResponse updatedApplication = applicationService.rejectApplication(id);
+    public ResponseEntity<ApplicationResponse> rejectApplication(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+
+        ApplicationResponse updatedApplication = applicationService.rejectApplication(id, user.getId());
         return ResponseEntity.ok(updatedApplication);
     }
 }

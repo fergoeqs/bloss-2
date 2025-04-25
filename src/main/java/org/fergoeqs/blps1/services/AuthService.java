@@ -4,7 +4,12 @@ package org.fergoeqs.blps1.services;
 import org.fergoeqs.blps1.dto.AuthResponse;
 import org.fergoeqs.blps1.dto.LoginRequest;
 import org.fergoeqs.blps1.dto.RegisterRequest;
+import org.fergoeqs.blps1.models.applicantdb.Applicant;
+import org.fergoeqs.blps1.models.employerdb.Employer;
+import org.fergoeqs.blps1.models.enums.Role;
 import org.fergoeqs.blps1.models.securitydb.User;
+import org.fergoeqs.blps1.repositories.applicantdb.ApplicantRepository;
+import org.fergoeqs.blps1.repositories.employerdb.EmployerRepository;
 import org.fergoeqs.blps1.repositories.securitydb.UserRepository;
 import org.fergoeqs.blps1.security.jwt.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,17 +25,21 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final EmployerRepository employerRepository;
+    private final ApplicantRepository applicantRepository;
 
     public AuthService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
-            AuthenticationManager authenticationManager
+            AuthenticationManager authenticationManager, EmployerRepository employerRepository, ApplicantRepository applicantRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.employerRepository = employerRepository;
+        this.applicantRepository = applicantRepository;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -45,6 +54,24 @@ public class AuthService {
         user.setRole(request.role());
 
         userRepository.save(user);
+
+        if (request.role() == Role.EMPLOYER_CREATOR || request.role() == Role.EMPLOYER_REVIEWER) {
+            if (request.companyName() == null || request.contactInfo() == null) {
+                throw new IllegalArgumentException("Company name and contact info are required for employer roles");
+            }
+            Employer employer = new Employer();
+            employer.setCompanyName(request.companyName());
+            employer.setContactInfo(request.contactInfo());
+            employer.setUserId(user.getId());
+            employer.setRole(request.role());
+            employerRepository.save(employer);
+        } else if (request.role() == Role.USER) {
+            Applicant applicant = new Applicant();
+            applicant.setName(request.name());
+            applicant.setContactInfo(request.contactInfo());
+            applicant.setUserId(user.getId());
+            applicantRepository.save(applicant);
+        }
 
         String jwtToken = jwtService.generateToken(user);
         return new AuthResponse(jwtToken);
