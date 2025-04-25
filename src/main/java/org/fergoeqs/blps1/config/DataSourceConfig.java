@@ -2,7 +2,6 @@ package org.fergoeqs.blps1.config;
 
 import com.atomikos.jdbc.AtomikosDataSourceBean;
 import org.postgresql.xa.PGXADataSource;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

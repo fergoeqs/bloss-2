@@ -4,6 +4,7 @@ import org.fergoeqs.blps1.dto.VacancyRequest;
 import org.fergoeqs.blps1.dto.VacancyResponse;
 import org.fergoeqs.blps1.models.employerdb.Vacancy;
 import org.fergoeqs.blps1.models.enums.VacancyStatus;
+import org.fergoeqs.blps1.repositories.employerdb.EmployerRepository;
 import org.fergoeqs.blps1.repositories.employerdb.VacancyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +18,11 @@ import java.util.Optional;
 public class VacancyService {
 
     private final VacancyRepository vacancyRepository;
+    private final EmployerRepository employerRepository;
 
-    public VacancyService(VacancyRepository vacancyRepository) {
+    public VacancyService(VacancyRepository vacancyRepository, EmployerRepository employerRepository) {
         this.vacancyRepository = vacancyRepository;
+        this.employerRepository = employerRepository;
     }
 
     @Transactional
@@ -35,6 +38,8 @@ public class VacancyService {
         vacancy.setResumeRequired(request.resumeRequired());
         vacancy.setCoverLetterRequired(request.coverLetterRequired());
         vacancy.setKeywords(request.keywords());
+        vacancy.setEmployer(employerRepository.findById(request.employerId()).orElseThrow(() ->
+                new IllegalArgumentException("Employer not found")));
 
 
         Vacancy savedVacancy = vacancyRepository.save(vacancy);
