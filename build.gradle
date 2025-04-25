@@ -25,6 +25,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
     implementation 'jakarta.validation:jakarta.validation-api:3.1.0'
+	implementation 'org.postgresql:postgresql:42.7.2'
+	implementation 'com.atomikos:transactions-jdbc:5.0.9'
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

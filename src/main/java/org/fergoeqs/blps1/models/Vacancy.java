@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "vacancies")
+@Table(name = "vacancies", schema = "employer_schema")
 @Data
 public class Vacancy {
     @Id
@@ -37,4 +37,8 @@ public class Vacancy {
     @OneToMany(mappedBy = "vacancy", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Application> applications = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "employer_id", nullable = false)
+    private Employer employer;
 }

@@ -3,19 +3,21 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/studs
-    username: s367243
-    password: 10s5iDYWGyVq2DuB
+    url: jdbc:postgresql://localhost:5432/blpsdb
+    username: blps
+    password: blps
     driver-class-name: org.postgresql.Driver
   jpa:
     generate-ddl: true
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
-
+        default_schema: none
+        hbm2ddl:
+          schema-generation.connections.schemas: employer_schema,applicant_schema
 logging:
   level:
     org.fergoeqs.blps1: INFO
