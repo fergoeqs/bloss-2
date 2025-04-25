@@ -1,4 +1,4 @@
-package org.fergoeqs.blps1.models;
+package org.fergoeqs.blps1.models.applicantdb;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

@@ -17,7 +17,10 @@ spring:
         format_sql: true
         default_schema: none
         hbm2ddl:
-          schema-generation.connections.schemas: employer_schema,applicant_schema
+          schema-generation.connections.schemas: employer_schema,applicant_schema, security_schema
+  jwt:
+    secret-key: "09d62fc50a9d8c09c3c3a82a3d5762cdfd85de199cb864b5378a77ff2c230159"
+    expiration: 360000000000
 logging:
   level:
     org.fergoeqs.blps1: INFO

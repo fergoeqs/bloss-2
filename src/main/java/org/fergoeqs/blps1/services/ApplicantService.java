@@ -4,16 +4,15 @@ import org.fergoeqs.blps1.dto.ApplicantRequest;
 import org.fergoeqs.blps1.dto.ApplicantResponse;
 import org.fergoeqs.blps1.dto.ResumeResponse;
 import org.fergoeqs.blps1.exceptions.ResourceNotFoundException;
-import org.fergoeqs.blps1.models.Applicant;
-import org.fergoeqs.blps1.models.Resume;
-import org.fergoeqs.blps1.repositories.ApplicantRepository;
-import org.fergoeqs.blps1.repositories.ResumeRepository;
+import org.fergoeqs.blps1.models.applicantdb.Applicant;
+import org.fergoeqs.blps1.models.applicantdb.Resume;
+import org.fergoeqs.blps1.repositories.applicantdb.ApplicantRepository;
+import org.fergoeqs.blps1.repositories.applicantdb.ResumeRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)

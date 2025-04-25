@@ -1,4 +1,4 @@
-package org.fergoeqs.blps1.models;
+package org.fergoeqs.blps1.models.securitydb;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "security_schema")
 @Getter
 @Setter
 public class User implements UserDetails {

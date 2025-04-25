@@ -3,14 +3,12 @@ package org.fergoeqs.blps1.controllers;
 import jakarta.validation.Valid;
 import org.fergoeqs.blps1.dto.VacancyRequest;
 import org.fergoeqs.blps1.dto.VacancyResponse;
-import org.fergoeqs.blps1.models.Vacancy;
+import org.fergoeqs.blps1.models.employerdb.Vacancy;
 import org.fergoeqs.blps1.services.VacancyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/vacancies")

@@ -4,15 +4,13 @@ import jakarta.validation.Valid;
 import org.fergoeqs.blps1.dto.ApplicantRequest;
 import org.fergoeqs.blps1.dto.ApplicantResponse;
 import org.fergoeqs.blps1.dto.ResumeResponse;
-import org.fergoeqs.blps1.models.Applicant;
-import org.fergoeqs.blps1.models.Resume;
+import org.fergoeqs.blps1.models.applicantdb.Applicant;
+import org.fergoeqs.blps1.models.applicantdb.Resume;
 import org.fergoeqs.blps1.services.ApplicantService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/applicants")
