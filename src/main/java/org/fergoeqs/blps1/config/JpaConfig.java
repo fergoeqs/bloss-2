@@ -56,7 +56,9 @@ public class JpaConfig {
         props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.show_sql", "true");
-        props.put("hibernate.default_schema", schema);
+        props.put("hibernate.format_sql", "true");
+        props.put("hibernate.temp.use_jdbc_metadata_defaults", "false");
+        props.put("javax.persistence.transactionType", "JTA");
         return props;
     }
 
