@@ -5,5 +5,6 @@ public record VacancyRequest(
         String description,
         boolean resumeRequired,
         boolean coverLetterRequired,
-        String keywords
+        String keywords,
+         Long employerId
 ) {}
