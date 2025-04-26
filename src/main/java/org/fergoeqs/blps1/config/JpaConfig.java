@@ -57,11 +57,6 @@ public class JpaConfig {
         props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.show_sql", "true");
         props.put("hibernate.default_schema", schema);
-        props.put("hibernate.format_sql", "true");
-        props.put("hibernate.temp.use_jdbc_metadata_defaults", "false");
-        props.put("javax.persistence.transactionType", "JTA");
-        props.put("hibernate.transaction.coordinator_class", "jta");
-        props.put("hibernate.connection.handling_mode", "DELAYED_ACQUISITION_AND_RELEASE_AFTER_STATEMENT");
         return props;
     }
 

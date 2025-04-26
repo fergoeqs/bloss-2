@@ -23,6 +23,7 @@ public class VacancyService {
     private final VacancyRepository vacancyRepository;
     private final EmployerRepository employerRepository;
 
+
     public VacancyService(VacancyRepository vacancyRepository, EmployerRepository employerRepository) {
         this.vacancyRepository = vacancyRepository;
         this.employerRepository = employerRepository;
@@ -42,14 +43,14 @@ public class VacancyService {
         }
 
         Vacancy vacancy = new Vacancy();
+        vacancy.setPendingLimit(request.pendingLimit() != null ?
+                request.pendingLimit() : 100);
         vacancy.setStatus(VacancyStatus.OPEN);
         vacancy.setTitle(request.title());
         vacancy.setDescription(request.description());
         vacancy.setResumeRequired(request.resumeRequired());
         vacancy.setCoverLetterRequired(request.coverLetterRequired());
         vacancy.setKeywords(request.keywords());
-        vacancy.setEmployer(employerRepository.findById(request.employerId()).orElseThrow(() ->
-                new IllegalArgumentException("Employer not found")));
 
 
         Vacancy savedVacancy = vacancyRepository.save(vacancy);

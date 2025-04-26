@@ -39,6 +39,12 @@ public class Vacancy {
 //    @JsonIgnore
 //    private List<Application> applications = new ArrayList<>();
 
+    @Column(name = "pending_limit", nullable = false)
+    private Integer pendingLimit = 100;
+
+    @Column(name = "pending_count", nullable = false)
+    private Integer pendingCount = 0;
+
     @ManyToOne
     @JoinColumn(name = "employer_id", nullable = false)
     private Employer employer;
