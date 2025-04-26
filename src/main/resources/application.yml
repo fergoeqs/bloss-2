@@ -11,13 +11,17 @@ spring:
     generate-ddl: true
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
         default_schema: none
         hbm2ddl:
           schema-generation.connections.schemas: employer_schema,applicant_schema, security_schema
+  jta:
+    enabled: true
+    log-dir: target/atomikos
+    transaction-manager-id: blps-tx-manager
 
   jwt:
     secret-key: "09d62fc50a9d8c09c3c3a82a3d5762cdfd85de199cb864b5378a77ff2c230159"
@@ -25,3 +29,6 @@ spring:
 logging:
   level:
     org.fergoeqs.blps1: INFO
+    com.atomikos: DEBUG
+    com.atomikos.jdbc: DEBUG
+    org.springframework.transaction: DEBUG

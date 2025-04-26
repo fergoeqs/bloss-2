@@ -9,6 +9,7 @@ services:
       POSTGRESQL_DATABASE: blpsdb
       POSTGRESQL_USERNAME: blps
       POSTGRESQL_PASSWORD: blps
+      POSTGRESQL_EXTRA_OPTS: "-c max_prepared_transactions=100"
     volumes:
       - dev-db-volume:/bitnami/postgresql
     ports:
@@ -18,6 +19,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 3
+
 
 networks:
   app-network:
