@@ -1,25 +1,29 @@
 volumes:
   dev-db-volume: {}
+
 services:
   dev-pg12:
     container_name: blps
-    hostname: lala4
-    image: bitnami/postgresql:17.2.0
+    image: postgres:17
     environment:
-      POSTGRESQL_DATABASE: blpsdb
-      POSTGRESQL_USERNAME: blps
-      POSTGRESQL_PASSWORD: blps
-      POSTGRESQL_EXTRA_OPTS: "-c max_prepared_transactions=100"
+      POSTGRES_DB: blpsdb
+      POSTGRES_USER: blps
+      POSTGRES_PASSWORD: blps
+    command:
+      - "postgres"
+      - "-c"
+      - "max_prepared_transactions=100"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
     volumes:
-      - dev-db-volume:/bitnami/postgresql
+      - dev-db-volume:/var/lib/postgresql/data
     ports:
-      - '5432:5432'
+      - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U blpsdb"]
+      test: ["CMD-SHELL", "pg_isready -U blps -d blpsdb"]
       interval: 5s
       timeout: 5s
       retries: 3
-
 
 networks:
   app-network:
