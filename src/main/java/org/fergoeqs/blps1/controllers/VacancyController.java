@@ -8,6 +8,7 @@ import org.fergoeqs.blps1.models.securitydb.User;
 import org.fergoeqs.blps1.services.VacancyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,9 +38,18 @@ public class VacancyController {
         return ResponseEntity.ok(vacancyService.openVacancy(id));
     }
 
-    @PatchMapping("{id}/close")
-    public ResponseEntity<Vacancy> closeVacancy(@PathVariable Long id) {
-        return ResponseEntity.ok(vacancyService.closeVacancy(id));
+    @PatchMapping("/{id}/close")
+    public ResponseEntity<?> closeVacancy(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Vacancy vacancy = vacancyService.closeVacancy(id, pageable);
+            return ResponseEntity.ok(vacancy);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
