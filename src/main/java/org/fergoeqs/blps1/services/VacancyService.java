@@ -17,56 +17,63 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
-@Transactional(readOnly = true)
+
 @Service
 public class VacancyService {
 
     private final VacancyRepository vacancyRepository;
     private final EmployerRepository employerRepository;
     private final ApplicationRepository applicationRepository;
+    private final TransactionService transactionService;
 
-    public VacancyService(VacancyRepository vacancyRepository, EmployerRepository employerRepository, ApplicationRepository applicationRepository) {
+    public VacancyService(VacancyRepository vacancyRepository, EmployerRepository employerRepository,
+                          ApplicationRepository applicationRepository, TransactionService transactionService) {
         this.vacancyRepository = vacancyRepository;
         this.employerRepository = employerRepository;
         this.applicationRepository = applicationRepository;
+        this.transactionService = transactionService;
     }
 
-    @Transactional
     public VacancyResponse createVacancy(VacancyRequest request, Long userId) {
-        Employer employer = employerRepository.findByUserId(userId)
-                .orElseThrow(() -> new AccessDeniedException("User is not an employer"));
+        return transactionService.execute(
+                "createVacancy",
+                30,
+                (status) -> {
+                    Employer employer = employerRepository.findByUserId(userId)
+                            .orElseThrow(() -> new AccessDeniedException("User is not an employer"));
 
-        if (employer.getRole() != Role.EMPLOYER_CREATOR) {
-            throw new AccessDeniedException("Only creators can create vacancies");
-        }
+                    if (employer.getRole() != Role.EMPLOYER_CREATOR) {
+                        throw new AccessDeniedException("Only creators can create vacancies");
+                    }
 
-        if (request.title() == null || request.title().isBlank()) {
-            throw new IllegalArgumentException("Title cannot be empty");
-        }
+                    if (request.title() == null || request.title().isBlank()) {
+                        throw new IllegalArgumentException("Title cannot be empty");
+                    }
 
-        Vacancy vacancy = new Vacancy();
-        vacancy.setPendingLimit(request.pendingLimit() != null ?
-                request.pendingLimit() : 100);
-        vacancy.setStatus(VacancyStatus.OPEN);
-        vacancy.setTitle(request.title());
-        vacancy.setDescription(request.description());
-        vacancy.setResumeRequired(request.resumeRequired());
-        vacancy.setCoverLetterRequired(request.coverLetterRequired());
-        vacancy.setKeywords(request.keywords());
+                    Vacancy vacancy = new Vacancy();
+                    vacancy.setPendingLimit(request.pendingLimit() != null ?
+                            request.pendingLimit() : 100);
+                    vacancy.setStatus(VacancyStatus.OPEN);
+                    vacancy.setTitle(request.title());
+                    vacancy.setDescription(request.description());
+                    vacancy.setResumeRequired(request.resumeRequired());
+                    vacancy.setCoverLetterRequired(request.coverLetterRequired());
+                    vacancy.setKeywords(request.keywords());
+                    vacancy.setEmployer(employer);
 
+                    Vacancy savedVacancy = vacancyRepository.save(vacancy);
 
-        Vacancy savedVacancy = vacancyRepository.save(vacancy);
-
-
-        return new VacancyResponse(
-                savedVacancy.getId(),
-                savedVacancy.getTitle(),
-                savedVacancy.getDescription(),
-                savedVacancy.isResumeRequired(),
-                savedVacancy.isCoverLetterRequired());
+                    return new VacancyResponse(
+                            savedVacancy.getId(),
+                            savedVacancy.getTitle(),
+                            savedVacancy.getDescription(),
+                            savedVacancy.isResumeRequired(),
+                            savedVacancy.isCoverLetterRequired()
+                    );
+                }
+        );
     }
 
     @Transactional
