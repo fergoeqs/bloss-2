@@ -24,5 +24,4 @@ spring:
     expiration: 360000000000
 logging:
   level:
-#    org.fergoeqs.blps1: INFO
-    com.atomikos: INFO
+    org.fergoeqs.blps1: INFO

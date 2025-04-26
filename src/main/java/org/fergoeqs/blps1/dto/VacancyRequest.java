@@ -1,10 +1,12 @@
 package org.fergoeqs.blps1.dto;
 
 public record VacancyRequest(
-         String title,
+        String title,
         String description,
         boolean resumeRequired,
         boolean coverLetterRequired,
         String keywords,
-         Long employerId
-) {}
+        Long employerId,
+        Integer pendingLimit
+) {
+}

@@ -56,6 +56,11 @@ public class ApplicationService {
 
         Vacancy vacancy = vacancyRepository.findById(request.vacancyId()) //потом подумать
                 .orElseThrow(() -> new ResourceNotFoundException("Vacancy not found"));
+
+        if (vacancy.getPendingCount() >= vacancy.getPendingLimit()) {
+            throw new IllegalStateException("Vacancy has reached application limit");
+        }
+
         Applicant applicant = applicantRepository.findById(request.applicantId())
                 .orElseThrow(() -> new ResourceNotFoundException("Applicant not found"));
 
@@ -103,13 +108,14 @@ public class ApplicationService {
                     ApplicationStatus.PENDING_WITH_WARNING :
                     ApplicationStatus.PENDING);
         }
-
+        vacancy.setPendingCount(vacancy.getPendingCount() + 1);
+        vacancyRepository.save(vacancy);
         Application saved = applicationRepository.save(application);
         return mapToResponse(saved);
     }
 
     @Transactional
-    public void deleteApplication(Long applicationId){
+    public void deleteApplication(Long applicationId) {
         applicationRepository.deleteById(applicationId);
     }
 
@@ -131,12 +137,20 @@ public class ApplicationService {
         Employer reviewer = employerRepository.findByUserId(userId)
                 .orElseThrow(() -> new AccessDeniedException("Not an employer"));
 
+        if (application.getStatus() == ApplicationStatus.PENDING
+                || application.getStatus() == ApplicationStatus.PENDING_WITH_WARNING) {
+
+            Vacancy vacancy = vacancyRepository.findById(application.getVacancyId())
+                    .orElseThrow();
+            vacancy.setPendingCount(vacancy.getPendingCount() - 1);
+            vacancyRepository.save(vacancy);
+        }
 
         application.setStatus(ApplicationStatus.ACCEPTED);
         Application updated = applicationRepository.save(application);
         Vacancy vacancy = vacancyRepository.findById(updated.getVacancyId()).orElseThrow();
 
-                logger.info("Applicant {} accepted for vacancy {}",
+        logger.info("Applicant {} accepted for vacancy {}",
                 updated.getApplicant().getName(),
                 vacancy.getTitle());
 
@@ -150,6 +164,16 @@ public class ApplicationService {
 
         Employer reviewer = employerRepository.findByUserId(userId)
                 .orElseThrow(() -> new AccessDeniedException("Not an employer"));
+
+
+        if (application.getStatus() == ApplicationStatus.PENDING
+                || application.getStatus() == ApplicationStatus.PENDING_WITH_WARNING) {
+
+            Vacancy vacancy = vacancyRepository.findById(application.getVacancyId())
+                    .orElseThrow();
+            vacancy.setPendingCount(vacancy.getPendingCount() - 1);
+            vacancyRepository.save(vacancy);
+        }
 
         application.setStatus(ApplicationStatus.REJECTED);
         Application updated = applicationRepository.save(application);
@@ -173,7 +197,8 @@ public class ApplicationService {
                         "The resume partially meets the requirements of the vacancy" : null,
                 application.getCreatedAt() != null ?
                         application.getCreatedAt() : LocalDateTime.now(),
-                application.getCoverLetter()
+                application.getCoverLetter(),
+                vacancy.getPendingLimit() - vacancy.getPendingCount()
         );
     }
 

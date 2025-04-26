@@ -20,11 +20,10 @@ public class TransactionConfig {
         return userTransactionManager;
     }
 
-    @Bean()
-    public JtaTransactionManager transactionManager(UserTransactionManager userTransactionManager) {
+    @Bean
+    public JtaTransactionManager transactionManager() throws SystemException {
         JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
-        jtaTransactionManager.setTransactionManager(userTransactionManager);
-        jtaTransactionManager.setUserTransaction( userTransactionManager);
+        jtaTransactionManager.setUserTransaction(userTransactionManager());
         return jtaTransactionManager;
     }
 }

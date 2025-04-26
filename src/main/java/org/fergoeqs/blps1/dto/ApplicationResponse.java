@@ -9,5 +9,7 @@ public record ApplicationResponse(
         String applicantName,
         String warningMessage,
         LocalDateTime createdAt,
-        String coverLetter
-) {}
+        String coverLetter,
+        Integer remainingSlots
+) {
+}
