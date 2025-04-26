@@ -10,8 +10,6 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
 
-import javax.transaction.SystemException;
-
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
