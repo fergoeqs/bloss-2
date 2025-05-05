@@ -61,6 +61,9 @@ public class AuthService {
                     user.setRole(request.role());
                     User savedUser = userRepository.save(user);
 
+//                    System.out.println("User saved: " + savedUser.getId());
+//                    try {Thread.sleep(2000);} catch (InterruptedException ignored) {}
+
                     if (request.role() == Role.EMPLOYER_CREATOR || request.role() == Role.EMPLOYER_REVIEWER) {
                         validateEmployerRequest(request);
                         Employer employer = createEmployer(request, savedUser.getId());
@@ -69,6 +72,7 @@ public class AuthService {
                         Applicant applicant = createApplicant(request, savedUser.getId());
                         applicantRepository.save(applicant);
                     }
+//                    throw new RuntimeException("Rollback transaction");
 
                     String jwtToken = jwtService.generateToken(user);
                     return new AuthResponse(jwtToken);
