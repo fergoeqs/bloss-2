@@ -21,6 +21,7 @@ public class JpaConfig {
             @Qualifier("applicantDataSource") DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
+                .jta(true)
                 .packages("org.fergoeqs.blps1.models.applicantdb")
                 .persistenceUnit("applicantPU")
                 .properties(jpaProperties("applicant_schema"))
@@ -33,6 +34,7 @@ public class JpaConfig {
             @Qualifier("employerDataSource") DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
+                .jta(true)
                 .packages("org.fergoeqs.blps1.models.employerdb")
                 .persistenceUnit("employerPU")
                 .properties(jpaProperties("employer_schema"))
@@ -45,6 +47,7 @@ public class JpaConfig {
             @Qualifier("securityDataSource") DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
+                .jta(true)
                 .packages("org.fergoeqs.blps1.models.securitydb")
                 .persistenceUnit("securityPU")
                 .properties(jpaProperties("security_schema"))
@@ -57,8 +60,6 @@ public class JpaConfig {
         props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.show_sql", "true");
         props.put("hibernate.format_sql", "true");
-        props.put("hibernate.temp.use_jdbc_metadata_defaults", "false");
-        props.put("javax.persistence.transactionType", "JTA");
         return props;
     }
 
