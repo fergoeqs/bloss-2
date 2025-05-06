@@ -33,6 +33,7 @@ public class Vacancy {
     private String keywords;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private VacancyStatus status;
 
 //    @OneToMany(mappedBy = "vacancy", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -11,57 +11,64 @@ import org.fergoeqs.blps1.repositories.applicantdb.ResumeRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Transactional(readOnly = true)
 @Service
 public class ApplicantService {
 
     private final ApplicantRepository applicantRepository;
-
     private final ResumeRepository resumeRepository;
+    private final TransactionService transactionService;
 
-    public ApplicantService(ApplicantRepository applicantRepository, ResumeRepository resumeRepository) {
+    public ApplicantService(ApplicantRepository applicantRepository, ResumeRepository resumeRepository,
+                            TransactionService transactionService) {
         this.applicantRepository = applicantRepository;
         this.resumeRepository = resumeRepository;
-    }
+        this.transactionService = transactionService;
 
-    @Transactional
-    public ApplicantResponse createApplicant(ApplicantRequest request) {
-        Applicant applicant = new Applicant();
-        applicant.setName(request.name());
-        applicant.setContactInfo(request.contactInfo());
-
-        Applicant saved = applicantRepository.save(applicant);
-        return new ApplicantResponse(
-                saved.getId(),
-                saved.getName(),
-                saved.getContactInfo()
-        );
-    }
-
-    @Transactional
-    public void deleteApplicant(Long id) {
-        applicantRepository.deleteById(id);
     }
 
     public Optional<Applicant> getApplicantById(Long id) {
         return applicantRepository.findById(id);
     }
 
-    @Transactional
-    public Resume addResume(Long applicantId, Resume resume) {
-        Optional<Applicant> applicantOpt = applicantRepository.findById(applicantId);
-        if (applicantOpt.isEmpty()) {
-            throw new RuntimeException("Applicant not found");
-        }
-        Applicant applicant = applicantOpt.get();
-        resume.setApplicant(applicant);
-        return resumeRepository.save(resume);
+    public ApplicantResponse createApplicant(ApplicantRequest request) {
+        return transactionService.execute("createApplicant", 30, status -> {
+                    Applicant applicant = new Applicant();
+                    applicant.setName(request.name());
+                    applicant.setContactInfo(request.contactInfo());
+
+                    Applicant saved = applicantRepository.save(applicant);
+                    return new ApplicantResponse(
+                            saved.getId(),
+                            saved.getName(),
+                            saved.getContactInfo()
+                    );
+                }
+        );
     }
 
+    public void deleteApplicant(Long id) {
+        transactionService.execute("deleteApplicant", 20, status -> {
+                    applicantRepository.deleteById(id);
+                    return null;
+        });
+    }
+
+    public Resume addResume(Long applicantId, Resume resume) {
+        return transactionService.execute("addResume", 30, status -> {
+                    Applicant applicant = applicantRepository.findById(applicantId)
+                            .orElseThrow(() -> new IllegalArgumentException("Applicant not found with id: " + applicantId));
+
+                    if (resume == null) {
+                        throw new IllegalArgumentException("Resume cannot be null");
+                    }
+                    resume.setApplicant(applicant);
+                    return resumeRepository.save(resume);
+                }
+        );
+    }
 
     public Page<ResumeResponse> getResumesByApplicantId(Long applicantId, Pageable pageable) {
         if (!applicantRepository.existsById(applicantId)) {

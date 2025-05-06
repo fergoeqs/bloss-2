@@ -1,7 +1,5 @@
 package org.fergoeqs.blps1.services;
 
-import jakarta.transaction.NotSupportedException;
-import jakarta.transaction.UserTransaction;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.TransactionException;
 import org.springframework.stereotype.Service;
@@ -9,6 +7,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
+
 
 @Service
 @RequiredArgsConstructor

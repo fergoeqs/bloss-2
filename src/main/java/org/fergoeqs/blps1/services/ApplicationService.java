@@ -20,7 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -29,7 +28,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Transactional(readOnly = true)
 @Service
 public class ApplicationService {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationService.class);
@@ -38,85 +36,96 @@ public class ApplicationService {
     private final ApplicantRepository applicantRepository;
     private final ResumeRepository resumeRepository;
     private final EmployerRepository employerRepository;
+    private final TransactionService transactionService;
 
     public ApplicationService(ApplicationRepository applicationRepository,
                               VacancyRepository vacancyRepository,
                               ApplicantRepository applicantRepository,
-                              ResumeRepository resumeRepository, EmployerRepository employerRepository) {
+                              ResumeRepository resumeRepository, EmployerRepository employerRepository,
+                              TransactionService transactionService) {
         this.applicationRepository = applicationRepository;
         this.vacancyRepository = vacancyRepository;
         this.applicantRepository = applicantRepository;
         this.resumeRepository = resumeRepository;
         this.employerRepository = employerRepository;
+        this.transactionService = transactionService;
     }
 
-    @Transactional
-    public ApplicationResponse createApplication(ApplicationRequest request) throws Exception {
-        Application application = new Application();
+    public ApplicationResponse createApplication(ApplicationRequest request) {
+        return transactionService.execute(
+                "createApplication",
+                30,
+                status -> {
+                    Application application = new Application();
 
-        Vacancy vacancy = vacancyRepository.findById(request.vacancyId()) //потом подумать
-                .orElseThrow(() -> new ResourceNotFoundException("Vacancy not found"));
+                    Vacancy vacancy = vacancyRepository.findById(request.vacancyId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Vacancy not found"));
 
-        if (vacancy.getPendingCount() >= vacancy.getPendingLimit()) {
-            throw new IllegalStateException("Vacancy has reached application limit");
-        }
+                    if (vacancy.getPendingCount() >= vacancy.getPendingLimit()) {
+                        throw new IllegalStateException("Vacancy has reached application limit");
+                    }
 
-        Applicant applicant = applicantRepository.findById(request.applicantId())
-                .orElseThrow(() -> new ResourceNotFoundException("Applicant not found"));
+                    Applicant applicant = applicantRepository.findById(request.applicantId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Applicant not found"));
 
-        application.setVacancyId(request.vacancyId());
-        application.setApplicant(applicant);
+                    application.setVacancyId(request.vacancyId());
+                    application.setApplicant(applicant);
 
-        String warning = null;
-        if (vacancy.isResumeRequired()) {
-            Resume resume;
-            if (applicant.getResumes() == null || applicant.getResumes().isEmpty()) {
-                application.setStatus(ApplicationStatus.RESUME_REQUIRED);
-                throw new Exception("Cover letter required");
-            } else {
-                if (applicant.getResumes().size() > 1) {
-                    if (request.resumeId() == null) {
-                        resume = applicant.getResumes().get(0);
-                    } else {
-                        resume = resumeRepository.findById(request.resumeId())
-                                .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
+                    String warning = null;
+                    if (vacancy.isResumeRequired()) {
+                        Resume resume;
+                        if (applicant.getResumes() == null || applicant.getResumes().isEmpty()) {
+                            application.setStatus(ApplicationStatus.RESUME_REQUIRED);
+                            throw new IllegalStateException("Resume required");
+                        } else {
+                            if (applicant.getResumes().size() > 1) {
+                                if (request.resumeId() == null) {
+                                    resume = applicant.getResumes().get(0);
+                                } else {
+                                    resume = resumeRepository.findById(request.resumeId())
+                                            .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
 
-                        if (!resume.getApplicant().getId().equals(applicant.getId())) {
-                            throw new Exception("Resume doesn't belong to applicant");
+                                    if (!resume.getApplicant().getId().equals(applicant.getId())) {
+                                        throw new IllegalStateException("Resume doesn't belong to applicant");
+                                    }
+                                }
+                            } else {
+                                resume = applicant.getResumes().get(0);
+                            }
+                            application.setResume(resume);
+                            if (!isResumeMatching(resume, vacancy)) {
+                                warning = "The resume does not meet the requirements of the vacancy. The application may be rejected.";
+                            }
                         }
                     }
-                } else {
-                    resume = applicant.getResumes().get(0);
-                }
-                application.setResume(resume);
-                if (!isResumeMatching(resume, vacancy)) {
-                    warning = "The resume does not meet the requirements of the vacancy. The application may be rejected.";
-                }
-            }
-        }
 
-        if (vacancy.isCoverLetterRequired() &&
-                (request.coverLetter() == null || request.coverLetter().isBlank())) {
-            application.setStatus(ApplicationStatus.COVER_LETTER_REQUIRED);
-            throw new Exception("Cover letter required");
-        } else {
-            application.setCoverLetter(request.coverLetter());
-        }
+                    if (vacancy.isCoverLetterRequired() &&
+                            (request.coverLetter() == null || request.coverLetter().isBlank())) {
+                        application.setStatus(ApplicationStatus.COVER_LETTER_REQUIRED);
+                        throw new IllegalStateException("Cover letter required");
+                    } else {
+                        application.setCoverLetter(request.coverLetter());
+                    }
 
-        if (application.getStatus() == null) {
-            application.setStatus(warning != null ?
-                    ApplicationStatus.PENDING_WITH_WARNING :
-                    ApplicationStatus.PENDING);
-        }
-        vacancy.setPendingCount(vacancy.getPendingCount() + 1);
-        vacancyRepository.save(vacancy);
-        Application saved = applicationRepository.save(application);
-        return mapToResponse(saved);
+                    if (application.getStatus() == null) {
+                        application.setStatus(warning != null ?
+                                ApplicationStatus.PENDING_WITH_WARNING :
+                                ApplicationStatus.PENDING);
+                    }
+                    vacancy.setPendingCount(vacancy.getPendingCount() + 1);
+                    vacancyRepository.save(vacancy);
+                    Application saved = applicationRepository.save(application);
+                    return mapToResponse(saved);
+                }
+        );
     }
 
-    @Transactional
     public void deleteApplication(Long applicationId) {
-        applicationRepository.deleteById(applicationId);
+        transactionService.execute("deleteApplication", 10, status -> {
+                    applicationRepository.deleteById(applicationId);
+                    return null;
+                }
+        );
     }
 
     public Page<ApplicationResponse> getApplicationsByVacancyId(Long vacancyId, Pageable pageable) {
@@ -129,61 +138,93 @@ public class ApplicationService {
                 .map(this::mapToResponse);
     }
 
-    @Transactional
     public ApplicationResponse acceptApplication(Long applicationId, Long userId) {
-        Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+        return transactionService.execute("acceptApplication", 30, status -> {
+                    Application application = applicationRepository.findById(applicationId)
+                            .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
-        Employer reviewer = employerRepository.findByUserId(userId)
-                .orElseThrow(() -> new AccessDeniedException("Not an employer"));
+                    Employer reviewer = employerRepository.findByUserId(userId)
+                            .orElseThrow(() -> new AccessDeniedException("Not an employer"));
 
-        if (application.getStatus() == ApplicationStatus.PENDING
-                || application.getStatus() == ApplicationStatus.PENDING_WITH_WARNING) {
+                    if (application.getStatus() == ApplicationStatus.PENDING
+                            || application.getStatus() == ApplicationStatus.PENDING_WITH_WARNING) {
 
-            Vacancy vacancy = vacancyRepository.findById(application.getVacancyId())
-                    .orElseThrow();
-            vacancy.setPendingCount(vacancy.getPendingCount() - 1);
-            vacancyRepository.save(vacancy);
-        }
+                        Vacancy vacancy = vacancyRepository.findById(application.getVacancyId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Vacancy not found"));
 
-        application.setStatus(ApplicationStatus.ACCEPTED);
-        Application updated = applicationRepository.save(application);
-        Vacancy vacancy = vacancyRepository.findById(updated.getVacancyId()).orElseThrow();
+                        vacancy.setPendingCount(vacancy.getPendingCount() - 1);
+                        vacancyRepository.save(vacancy);
+                    }
 
-        logger.info("Applicant {} accepted for vacancy {}",
-                updated.getApplicant().getName(),
-                vacancy.getTitle());
+                    application.setStatus(ApplicationStatus.ACCEPTED);
+                    Application updated = applicationRepository.save(application);
+                    Vacancy vacancy = vacancyRepository.findById(updated.getVacancyId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Vacancy not found"));
 
-        return mapToResponse(updated);
+                    logger.info("Applicant {} accepted for vacancy {}",
+                            updated.getApplicant().getName(),
+                            vacancy.getTitle());
+
+                    return mapToResponse(updated);
+                }
+        );
     }
 
-    @Transactional
     public ApplicationResponse rejectApplication(Long applicationId, Long userId) {
-        Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+        return transactionService.execute("rejectApplication", 30, status -> {
 
-        Employer reviewer = employerRepository.findByUserId(userId)
-                .orElseThrow(() -> new AccessDeniedException("Not an employer"));
+                    Application application = applicationRepository.findById(applicationId)
+                            .orElseThrow(() -> new ResourceNotFoundException("Application not found with id: " + applicationId));
 
+                    Employer reviewer = employerRepository.findByUserId(userId)
+                            .orElseThrow(() -> new AccessDeniedException("User with id " + userId + " is not registered as employer"));
 
-        if (application.getStatus() == ApplicationStatus.PENDING
-                || application.getStatus() == ApplicationStatus.PENDING_WITH_WARNING) {
+                    if (application.getStatus() == ApplicationStatus.PENDING
+                            || application.getStatus() == ApplicationStatus.PENDING_WITH_WARNING) {
 
-            Vacancy vacancy = vacancyRepository.findById(application.getVacancyId())
-                    .orElseThrow();
-            vacancy.setPendingCount(vacancy.getPendingCount() - 1);
-            vacancyRepository.save(vacancy);
-        }
+                        Vacancy vacancy = vacancyRepository.findById(application.getVacancyId())
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                        "Vacancy not found for application: " + applicationId));
 
-        application.setStatus(ApplicationStatus.REJECTED);
-        Application updated = applicationRepository.save(application);
-        Vacancy vacancy = vacancyRepository.findById(updated.getVacancyId()).orElseThrow();
+                        vacancy.setPendingCount(vacancy.getPendingCount() - 1);
+                        vacancyRepository.save(vacancy);
+                    }
+                    application.setStatus(ApplicationStatus.REJECTED);
+                    Application updated = applicationRepository.save(application);
 
-        logger.info("Applicant {} rejected for vacancy {}",
-                updated.getApplicant().getName(),
-                vacancy.getTitle());
+                    Vacancy vacancy = vacancyRepository.findById(updated.getVacancyId())
+                            .orElseThrow(() -> new ResourceNotFoundException(
+                                    "Vacancy not found after update for application: " + applicationId));
 
-        return mapToResponse(updated);
+                    logger.info("Application {} rejected by employer {}. Applicant: {}, Vacancy: {}",
+                            applicationId,
+                            reviewer.getId(),
+                            updated.getApplicant().getName(),
+                            vacancy.getTitle());
+
+                    return mapToResponse(updated);
+                }
+        );
+    }
+
+    public ApplicationResponse addCoverLetter(Long applicationId, String coverLetter) {
+        return transactionService.execute("addCoverLetter", 15, status -> {
+                    Application application = applicationRepository.findById(applicationId)
+                            .orElseThrow(() -> new ResourceNotFoundException(
+                                    "Application not found with id: " + applicationId));
+
+                    if (coverLetter == null || coverLetter.trim().isEmpty()) {
+                        throw new IllegalArgumentException("Cover letter cannot be empty");
+                    }
+                    application.setCoverLetter(coverLetter);
+                    application.setStatus(ApplicationStatus.PENDING);
+                    Application updated = applicationRepository.save(application);
+                    logger.info("Cover letter added to application {}. New status: PENDING",
+                            applicationId);
+
+                    return mapToResponse(updated);
+                }
+        );
     }
 
     private ApplicationResponse mapToResponse(Application application) {
@@ -225,15 +266,5 @@ public class ApplicationService {
                 .count();
 
         return matches >= requiredMatches;
-    }
-
-    @Transactional
-    public ApplicationResponse addCoverLetter(Long applicationId, String coverLetter) {
-        Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
-        application.setCoverLetter(coverLetter);
-        application.setStatus(ApplicationStatus.PENDING);
-        Application updated = applicationRepository.save(application);
-        return mapToResponse(updated);
     }
 }
