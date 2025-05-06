@@ -2,6 +2,7 @@ package org.fergoeqs.blps1.services;
 
 import org.fergoeqs.blps1.dto.VacancyRequest;
 import org.fergoeqs.blps1.dto.VacancyResponse;
+import org.fergoeqs.blps1.exceptions.ResourceNotFoundException;
 import org.fergoeqs.blps1.models.applicantdb.Application;
 import org.fergoeqs.blps1.models.employerdb.Employer;
 import org.fergoeqs.blps1.models.employerdb.Vacancy;
@@ -13,7 +14,6 @@ import org.fergoeqs.blps1.repositories.employerdb.EmployerRepository;
 import org.fergoeqs.blps1.repositories.employerdb.VacancyRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -28,6 +28,7 @@ public class VacancyService {
     private final ApplicationRepository applicationRepository;
     private final TransactionService transactionService;
 
+
     public VacancyService(VacancyRepository vacancyRepository, EmployerRepository employerRepository,
                           ApplicationRepository applicationRepository, TransactionService transactionService) {
         this.vacancyRepository = vacancyRepository;
@@ -36,11 +37,20 @@ public class VacancyService {
         this.transactionService = transactionService;
     }
 
+    public Page<Vacancy> getAllVacancies(Pageable pageable) {
+        return vacancyRepository.findAll(pageable);
+    }
+
+    public Page<Vacancy> getAllByStatusIsOpen(Pageable pageable) {
+        return vacancyRepository.findAllByStatus(VacancyStatus.OPEN, pageable);
+    }
+
+    public Optional<Vacancy> getVacancyById(Long id) {
+        return vacancyRepository.findById(id);
+    }
+
     public VacancyResponse createVacancy(VacancyRequest request, Long userId) {
-        return transactionService.execute(
-                "createVacancy",
-                30,
-                (status) -> {
+        return transactionService.execute("createVacancy", 30, (status) -> {
                     Employer employer = employerRepository.findByUserId(userId)
                             .orElseThrow(() -> new AccessDeniedException("User is not an employer"));
 
@@ -76,44 +86,44 @@ public class VacancyService {
         );
     }
 
-    @Transactional
     public void deleteVacancy(Long id) {
-        vacancyRepository.deleteById(id);
-    }
-
-    @Transactional
-    public Vacancy openVacancy(Long id) {
-        Vacancy vacancy = vacancyRepository.findById(id).orElseThrow(()
-                -> new IllegalArgumentException("Vacancy not found"));
-        vacancy.setStatus(VacancyStatus.OPEN);
-        return vacancy;
-    }
-
-    @Transactional
-    public Vacancy closeVacancy(Long id, Pageable pageable) {
-        Vacancy vacancy = vacancyRepository.findById(id).orElseThrow(()
-                -> new IllegalArgumentException("Vacancy not found"));
-        Page<Application> applications = applicationRepository.findByVacancyId(vacancy.getId(), pageable);
-        applications.stream()
-                .filter(app -> app.getStatus() == ApplicationStatus.PENDING
-                        || app.getStatus() == ApplicationStatus.PENDING_WITH_WARNING)
-                .forEach(app -> {
-                    app.setStatus(ApplicationStatus.REJECTED);
-                    applicationRepository.save(app);
+        transactionService.execute("deleteVacancy", 20, status -> {
+                    vacancyRepository.deleteById(id);
+                    return null;
                 });
-        vacancy.setStatus(VacancyStatus.CLOSED);
-        return vacancy;
     }
 
-    public Page<Vacancy> getAllVacancies(Pageable pageable) {
-        return vacancyRepository.findAll(pageable);
+    public Vacancy openVacancy(Long id) {
+        return transactionService.execute("openVacancy", 30, status -> {
+                    Vacancy vacancy = vacancyRepository.findById(id)
+                            .orElseThrow(() -> new ResourceNotFoundException(
+                                    "Vacancy not found with id: " + id));
+
+                    if (vacancy.getStatus() == VacancyStatus.OPEN) {
+                        return vacancy;
+                    }
+                    vacancy.setStatus(VacancyStatus.OPEN);
+                return vacancyRepository.save(vacancy);
+                });
     }
 
-    public Page<Vacancy> getAllByStatusIsOpen(Pageable pageable) {
-        return vacancyRepository.findAllByStatus(VacancyStatus.OPEN, pageable);
+    public Vacancy closeVacancy(Long id, Pageable pageable) {
+        return transactionService.execute("closeVacancy", 30, status -> {
+                    Vacancy vacancy = vacancyRepository.findById(id).orElseThrow(()
+                            -> new IllegalArgumentException("Vacancy not found"));
+
+                    Page<Application> applications = applicationRepository.findByVacancyId(vacancy.getId(), pageable);
+                    applications.stream()
+                            .filter(app -> app.getStatus() == ApplicationStatus.PENDING
+                                    || app.getStatus() == ApplicationStatus.PENDING_WITH_WARNING)
+                            .forEach(app -> {
+                                app.setStatus(ApplicationStatus.REJECTED);
+                                applicationRepository.save(app);
+                            });
+                    vacancy.setStatus(VacancyStatus.CLOSED);
+                    return vacancy;
+                }
+        );
     }
 
-    public Optional<Vacancy> getVacancyById(Long id) {
-        return vacancyRepository.findById(id);
-    }
 }
