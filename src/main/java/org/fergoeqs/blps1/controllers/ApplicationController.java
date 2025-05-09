@@ -7,6 +7,7 @@ import org.fergoeqs.blps1.services.ApplicationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ApplicationController {
         this.applicationService = applicationService;
     }
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ApplicationResponse> createApplication(
             @Valid @RequestBody ApplicationRequest request) throws Exception {
 
@@ -29,6 +31,7 @@ public class ApplicationController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<ApplicationResponse> deleteApplication(@PathVariable Long id) throws Exception {
         applicationService.deleteApplication(id);
         return ResponseEntity.ok().build();
@@ -50,6 +53,7 @@ public class ApplicationController {
     }
 
     @PatchMapping("/{id}/cover-letter")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ApplicationResponse> addCoverLetter(
             @PathVariable Long id,
             @RequestBody String coverLetter) {

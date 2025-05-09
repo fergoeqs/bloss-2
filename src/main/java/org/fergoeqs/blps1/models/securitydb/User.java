@@ -62,4 +62,50 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-}
+
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
+
+    public static class UserBuilder {
+        private Long id;
+        private String email;
+        private String password;
+        private List<GrantedAuthority> authorities;
+        private Role role;
+
+        public UserBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public UserBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserBuilder authorities(List<GrantedAuthority> authorities) {
+            this.authorities = authorities;
+
+            if (authorities != null && !authorities.isEmpty()) {
+                String roleName = authorities.get(0).getAuthority()
+                        .replace("ROLE_", "");
+                this.role = Role.valueOf(roleName);
+            }
+            return this;
+        }
+
+        public User build() {
+            User user = new User();
+            user.setId(this.id);
+            user.setEmail(this.email);
+            user.setPassword(this.password);
+            user.setRole(this.role);
+            return user;
+        }
+    }}

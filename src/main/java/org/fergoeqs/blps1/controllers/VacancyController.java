@@ -34,11 +34,13 @@ public class VacancyController {
     }
 
     @PatchMapping("{id}/open")
+    @PreAuthorize("hasAnyRole('EMPLOYER_CREATOR', 'EMPLOYER_REVIEWER')")
     public ResponseEntity<Vacancy> openVacancy(@PathVariable Long id) {
         return ResponseEntity.ok(vacancyService.openVacancy(id));
     }
 
     @PatchMapping("/{id}/close")
+    @PreAuthorize("hasAnyRole('EMPLOYER_CREATOR', 'EMPLOYER_REVIEWER')")
     public ResponseEntity<?> closeVacancy(
             @PathVariable Long id,
             @RequestParam(defaultValue = "0") int page,
@@ -53,6 +55,7 @@ public class VacancyController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('EMPLOYER_CREATOR')")
     public ResponseEntity<?> deleteVacancy(@PathVariable Long id) {
         vacancyService.deleteVacancy(id);
         return ResponseEntity.ok().build();
