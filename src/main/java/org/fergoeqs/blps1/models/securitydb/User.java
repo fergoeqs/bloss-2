@@ -62,4 +62,51 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-}
+
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
+
+    public static class UserBuilder {
+        private Long id;
+        private String email; // Изменили с username на email
+        private String password;
+        private List<GrantedAuthority> authorities;
+        private Role role; // Добавили поле для роли
+
+        public UserBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder email(String email) { // Переименовали метод
+            this.email = email;
+            return this;
+        }
+
+        public UserBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserBuilder authorities(List<GrantedAuthority> authorities) {
+            this.authorities = authorities;
+
+            // Автоматически определяем роль из authorities
+            if (authorities != null && !authorities.isEmpty()) {
+                String roleName = authorities.get(0).getAuthority()
+                        .replace("ROLE_", "");
+                this.role = Role.valueOf(roleName);
+            }
+            return this;
+        }
+
+        public User build() {
+            User user = new User();
+            user.setId(this.id);
+            user.setEmail(this.email); // Используем email вместо username
+            user.setPassword(this.password);
+            user.setRole(this.role); // Устанавливаем роль
+            return user;
+        }
+    }}
