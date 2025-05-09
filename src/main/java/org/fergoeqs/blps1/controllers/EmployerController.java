@@ -31,6 +31,7 @@ public class EmployerController {
 
 
     @PutMapping("/applications/{id}/accept")
+    @PreAuthorize("hasAnyRole('EMPLOYER_CREATOR', 'EMPLOYER_REVIEWER')")
     public ResponseEntity<ApplicationResponse> acceptApplication(
             @PathVariable Long id,
             @AuthenticationPrincipal User user) {
@@ -40,6 +41,7 @@ public class EmployerController {
     }
 
     @PutMapping("/applications/{id}/reject")
+    @PreAuthorize("hasAnyRole('EMPLOYER_CREATOR', 'EMPLOYER_REVIEWER')")
     public ResponseEntity<ApplicationResponse> rejectApplication(
             @PathVariable Long id,
             @AuthenticationPrincipal User user) {

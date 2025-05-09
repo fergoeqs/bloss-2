@@ -69,17 +69,17 @@ public class User implements UserDetails {
 
     public static class UserBuilder {
         private Long id;
-        private String email; // Изменили с username на email
+        private String email;
         private String password;
         private List<GrantedAuthority> authorities;
-        private Role role; // Добавили поле для роли
+        private Role role;
 
         public UserBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public UserBuilder email(String email) { // Переименовали метод
+        public UserBuilder email(String email) {
             this.email = email;
             return this;
         }
@@ -92,7 +92,6 @@ public class User implements UserDetails {
         public UserBuilder authorities(List<GrantedAuthority> authorities) {
             this.authorities = authorities;
 
-            // Автоматически определяем роль из authorities
             if (authorities != null && !authorities.isEmpty()) {
                 String roleName = authorities.get(0).getAuthority()
                         .replace("ROLE_", "");
@@ -104,9 +103,9 @@ public class User implements UserDetails {
         public User build() {
             User user = new User();
             user.setId(this.id);
-            user.setEmail(this.email); // Используем email вместо username
+            user.setEmail(this.email);
             user.setPassword(this.password);
-            user.setRole(this.role); // Устанавливаем роль
+            user.setRole(this.role);
             return user;
         }
     }}
