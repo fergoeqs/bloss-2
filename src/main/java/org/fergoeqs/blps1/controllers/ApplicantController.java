@@ -10,6 +10,7 @@ import org.fergoeqs.blps1.services.ApplicantService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,6 +24,7 @@ public class ApplicantController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApplicantResponse> createApplicant(
             @Valid @RequestBody ApplicantRequest request) {
         ApplicantResponse response = applicantService.createApplicant(request);
@@ -30,6 +32,7 @@ public class ApplicantController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteApplicant(@PathVariable Long id) {
         applicantService.deleteApplicant(id);
         return ResponseEntity.ok().build();
@@ -43,6 +46,7 @@ public class ApplicantController {
     }
 
     @PostMapping("/{id}/resumes")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Resume> addResume(@PathVariable Long id, @Valid @RequestBody Resume resume) {
         Resume createdResume = applicantService.addResume(id, resume);
         return ResponseEntity.ok(createdResume);
