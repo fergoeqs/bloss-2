@@ -60,7 +60,6 @@ public class ApplicantService {
         return transactionService.execute("addResume", 30, status -> {
                     Applicant applicant = applicantRepository.findById(applicantId)
                             .orElseThrow(() -> new IllegalArgumentException("Applicant not found with id: " + applicantId));
-
                     if (resume == null) {
                         throw new IllegalArgumentException("Resume cannot be null");
                     }
