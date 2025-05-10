@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import java.util.Properties;
-
 
 @Configuration
 @EnableTransactionManagement
