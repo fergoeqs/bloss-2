@@ -4,30 +4,53 @@ import jakarta.validation.Valid;
 import org.fergoeqs.blps1.dto.ApplicationRequest;
 import org.fergoeqs.blps1.dto.ApplicationResponse;
 import org.fergoeqs.blps1.services.ApplicationService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/applications")
 public class ApplicationController {
 
     private final ApplicationService applicationService;
+    private final JmsTemplate jmsTemplate;
+    private final String applicationQueue;
 
-    public ApplicationController(ApplicationService applicationService) {
+    public ApplicationController(
+            JmsTemplate jmsTemplate,
+            @Value("${app.queue.application}") String applicationQueue, ApplicationService applicationService) {
+
+        this.jmsTemplate = jmsTemplate;
+        this.applicationQueue = applicationQueue;
         this.applicationService = applicationService;
+
     }
+
+
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ApplicationResponse> createApplication(
             @Valid @RequestBody ApplicationRequest request) throws Exception {
-
-        ApplicationResponse response = applicationService.createApplication(request);
-        return ResponseEntity.ok(response);
+        String correlationId = UUID.randomUUID().toString();
+        jmsTemplate.convertAndSend(applicationQueue, request, message -> {
+            message.setJMSCorrelationID(correlationId);
+            return message;
+        });
+//        ApplicationResponse response = applicationService.createApplication(request);
+//        return ResponseEntity.ok(response);
+        return ResponseEntity.accepted().body(
+                new ApplicationResponse(
+                        correlationId,
+                        "Ваша заявка принята в обработку"
+                )
+        );
     }
 
     @DeleteMapping("/{id}")
