@@ -4,7 +4,7 @@ volumes:
 
 services:
   dev-pg12:
-    container_name: blps
+    container_name: blps3
     image: postgres:17
     environment:
       POSTGRES_DB: blpsdb

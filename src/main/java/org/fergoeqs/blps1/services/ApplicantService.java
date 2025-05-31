@@ -38,12 +38,14 @@ public class ApplicantService {
                     Applicant applicant = new Applicant();
                     applicant.setName(request.name());
                     applicant.setContactInfo(request.contactInfo());
+                    applicant.setMail(request.email());
 
                     Applicant saved = applicantRepository.save(applicant);
                     return new ApplicantResponse(
                             saved.getId(),
                             saved.getName(),
-                            saved.getContactInfo()
+                            saved.getContactInfo(),
+                            saved.getMail()
                     );
                 }
         );

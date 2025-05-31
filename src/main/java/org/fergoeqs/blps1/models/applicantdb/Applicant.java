@@ -2,10 +2,13 @@ package org.fergoeqs.blps1.models.applicantdb;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 @Entity
 @Table(name = "applicants", schema = "applicant_schema")
 @Data
@@ -26,4 +29,8 @@ public class Applicant {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    @Column(name = "mail", unique = true)
+    @Email(message = "Email should be in format like email@example.com")
+    private String mail;
 }

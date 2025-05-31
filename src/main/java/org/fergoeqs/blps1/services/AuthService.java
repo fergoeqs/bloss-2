@@ -100,6 +100,7 @@ public class AuthService {
         applicant.setName(request.name());
         applicant.setContactInfo(request.contactInfo());
         applicant.setUserId(userId);
+        applicant.setMail(request.email());
         return applicant;
     }
 

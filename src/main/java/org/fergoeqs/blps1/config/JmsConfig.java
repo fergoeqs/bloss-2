@@ -60,7 +60,7 @@ public class JmsConfig {
         factory.setTransactionManager(transactionManager);
         factory.setSessionTransacted(true);
         factory.setConcurrency("2-5");
-        factory.setMessageConverter(jsonMessageConverter); // Устанавливаем кастомный конвертер
+        factory.setMessageConverter(jsonMessageConverter);
         return factory;
     }
 }

@@ -26,9 +26,27 @@ spring:
   jwt:
     secret-key: "09d62fc50a9d8c09c3c3a82a3d5762cdfd85de199cb864b5378a77ff2c230159"
     expiration: 360000000000
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        acknowledge-mode: auto # Подтверждение автоматическое
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 5000ms
+
+app:
+  queue:
+    application: applications.queue
+    interview: interview.queue
+
 logging:
   level:
-    org.fergoeqs.blps1: INFO
+    org.fergoeqs.blps1: debug
     com.atomikos: DEBUG
     com.atomikos.jdbc: DEBUG
     org.springframework.transaction: DEBUG

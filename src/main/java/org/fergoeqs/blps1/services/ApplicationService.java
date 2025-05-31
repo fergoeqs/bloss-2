@@ -2,6 +2,7 @@ package org.fergoeqs.blps1.services;
 
 import org.fergoeqs.blps1.dto.ApplicationRequest;
 import org.fergoeqs.blps1.dto.ApplicationResponse;
+import org.fergoeqs.blps1.dto.ApplicationStatusEvent;
 import org.fergoeqs.blps1.exceptions.ResourceNotFoundException;
 import org.fergoeqs.blps1.models.applicantdb.Applicant;
 import org.fergoeqs.blps1.models.applicantdb.Application;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -37,18 +39,20 @@ public class ApplicationService {
     private final ResumeRepository resumeRepository;
     private final EmployerRepository employerRepository;
     private final TransactionService transactionService;
+    private final JmsTemplate jmsTemplate;
 
     public ApplicationService(ApplicationRepository applicationRepository,
                               VacancyRepository vacancyRepository,
                               ApplicantRepository applicantRepository,
                               ResumeRepository resumeRepository, EmployerRepository employerRepository,
-                              TransactionService transactionService) {
+                              TransactionService transactionService, JmsTemplate jmsTemplate) {
         this.applicationRepository = applicationRepository;
         this.vacancyRepository = vacancyRepository;
         this.applicantRepository = applicantRepository;
         this.resumeRepository = resumeRepository;
         this.employerRepository = employerRepository;
         this.transactionService = transactionService;
+        this.jmsTemplate = jmsTemplate;
     }
 
     public ApplicationResponse createApplication(ApplicationRequest request) {
@@ -165,6 +169,21 @@ public class ApplicationService {
                             updated.getApplicant().getName(),
                             vacancy.getTitle());
 
+                    ApplicationStatusEvent event = new ApplicationStatusEvent(
+                    updated.getApplicant().getMail(),
+                    updated.getApplicant().getName(),
+                    vacancy.getTitle()
+                    );
+
+            jmsTemplate.convertAndSend(
+                    "applications.queue",
+                    event,
+                    message -> {
+                        message.setJMSType("ApplicationAccepted");
+                        message.setJMSPriority(4);
+                        return message;
+                    }
+            );
                     return mapToResponse(updated);
                 }
         );
@@ -201,6 +220,22 @@ public class ApplicationService {
                             reviewer.getId(),
                             updated.getApplicant().getName(),
                             vacancy.getTitle());
+
+                    ApplicationStatusEvent event = new ApplicationStatusEvent(
+                            updated.getApplicant().getMail(),
+                            updated.getApplicant().getName(),
+                            vacancy.getTitle()
+                    );
+
+                    jmsTemplate.convertAndSend(
+                            "applications.queue",
+                            event,
+                            message -> {
+                                message.setJMSType("ApplicationRejected");
+                                message.setJMSPriority(4);
+                                return message;
+                            }
+                    );
 
                     return mapToResponse(updated);
                 }

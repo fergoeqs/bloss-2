@@ -43,14 +43,14 @@ public class ApplicationController {
             message.setJMSCorrelationID(correlationId);
             return message;
         });
-//        ApplicationResponse response = applicationService.createApplication(request);
-//        return ResponseEntity.ok(response);
-        return ResponseEntity.accepted().body(
-                new ApplicationResponse(
-                        correlationId,
-                        "Ваша заявка принята в обработку"
-                )
-        );
+        ApplicationResponse response = applicationService.createApplication(request);
+        return ResponseEntity.ok(response);
+//        return ResponseEntity.accepted().body(
+//                new ApplicationResponse(
+//                        correlationId,
+//                        "Ваша заявка принята в обработку"
+//                )
+//        );
     }
 
     @DeleteMapping("/{id}")
