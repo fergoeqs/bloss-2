@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c6a4d8e8-ed6f-42c8-8cd0-c07ac824982f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/hr-event-processor" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/.gitattributes" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/custom-postgresql.conf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/gradlew" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/gradlew.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/settings.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/Blps1Application.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/config/DataSourceConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/config/JmsConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/config/JpaConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/config/TransactionConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/controllers/ApplicantController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/controllers/ApplicationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/controllers/AuthController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/controllers/EmployerController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/controllers/VacancyController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/ApiError.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/ApplicantRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/ApplicantResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/ApplicationRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/ApplicationResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/ApplicationStatusEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/AuthResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/LoginRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/RegisterRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/ResumeRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/ResumeResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/VacancyRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/dto/VacancyResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/exceptions/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/exceptions/ResourceNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/models/applicantdb/Applicant.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/models/applicantdb/Application.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/models/applicantdb/Resume.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/models/employerdb/Employer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/models/employerdb/Vacancy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/models/enums/ApplicationStatus.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/models/enums/Role.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/models/enums/VacancyStatus.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/models/securitydb/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/repositories/applicantdb/ApplicantRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/repositories/applicantdb/ApplicationRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/repositories/applicantdb/ResumeRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/repositories/employerdb/EmployerRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/repositories/employerdb/VacancyRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/repositories/securitydb/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/security/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/security/jwt/JwtAuthenticationFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/security/jwt/JwtService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/security/utils/UserDetailsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/services/ApplicantService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/services/ApplicationProcessor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/services/ApplicationService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/services/AuthService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/services/JsonMessageConverter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/services/TransactionService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/java/org/fergoeqs/blps1/services/VacancyService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/src/test/java/org/fergoeqs/blps1/Blps1ApplicationTests.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main-service/tmlog53.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/custom-postgresql.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hr-event-processor/src/main/java/org/fergoeqs/hreventprocessor/service/MailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/hr-event-processor/src/main/java/org/fergoeqs/hreventprocessor/service/MailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/Blps1Application.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/config/DataSourceConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/config/JmsConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/config/JpaConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/config/TransactionConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/controllers/ApplicantController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/controllers/ApplicationController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/controllers/AuthController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/controllers/EmployerController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/controllers/VacancyController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/ApiError.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/ApplicantRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/ApplicantResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/ApplicationRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/ApplicationResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/ApplicationStatusEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/AuthResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/LoginRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/RegisterRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/ResumeRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/ResumeResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/VacancyRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/dto/VacancyResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/exceptions/GlobalExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/exceptions/ResourceNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/models/applicantdb/Applicant.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/models/applicantdb/Application.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/models/applicantdb/Resume.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/models/employerdb/Employer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/models/employerdb/Vacancy.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/models/enums/ApplicationStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/models/enums/Role.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/models/enums/VacancyStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/models/securitydb/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/repositories/applicantdb/ApplicantRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/repositories/applicantdb/ApplicationRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/repositories/applicantdb/ResumeRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/repositories/employerdb/EmployerRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/repositories/employerdb/VacancyRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/repositories/securitydb/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/security/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/security/jwt/JwtAuthenticationFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/security/jwt/JwtService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/security/utils/UserDetailsServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/services/ApplicantService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/services/ApplicationProcessor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/services/ApplicationService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/services/AuthService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/services/JsonMessageConverter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/services/TransactionService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/fergoeqs/blps1/services/VacancyService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/fergoeqs/blps1/Blps1ApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tmlog.lck" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tmlog53.log" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="blps-1" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Record" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;FergieDoigrales&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/FergieDoigrales/bloss-2&quot;,
+    &quot;accountId&quot;: &quot;287feac5-971e-463c-a1ed-e2101f43706f&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2xpqIRg0bU6wqqbjAfUkhWVDEZj" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Build bloss-2.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.Blps1Application.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;lb3&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;K:/git/eoeqferg&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
+    ]
+  }
+}</component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="bloss-2" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="bloss-2" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Blps1Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="blps-1.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.fergoeqs.blps1.Blps1Application" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.22562.218" />
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-IU-243.22562.218" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c6a4d8e8-ed6f-42c8-8cd0-c07ac824982f" name="Changes" comment="" />
+      <created>1748645285249</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1748645285249</updated>
+      <workItem from="1748645286776" duration="12358000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
