@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Отказ по вакансии</title>
+  <style>
+    .header { color: #2c3e50; font-family: Arial, sans-serif; }
+    .content { font-family: Arial, sans-serif; line-height: 1.6; }
+    .footer { margin-top: 20px; font-size: 0.9em; color: #7f8c8d; }
+  </style>
+</head>
+<body>
+<div class="header">
+  <h1>Ответ по вакансии</h1>
+</div>
+
+<div class="content">
+  <p>Уважаемый <span th:text="${candidateName}"></span>,</p>
+
+  <p>Благодарим вас за интерес к вакансии
+    <strong th:text="${vacancyTitle}"></strong>.</p>
+
+  <p>После тщательного рассмотрения вашей кандидатуры, мы, к сожалению,
+    не можем предложить вам позицию на данном этапе.</p>
+
+  <p>Ваше резюме будет сохранено в нашей базе, и мы свяжемся с вами,
+    если появится подходящая возможность.</p>
+</div>
+
+<div class="footer">
+  <p>С уважением,<br>
+    HR-отдел<br>
+    <span th:text="${companyName}">Кротовуха</span></p>
+</div>
+</body>
+</html>
