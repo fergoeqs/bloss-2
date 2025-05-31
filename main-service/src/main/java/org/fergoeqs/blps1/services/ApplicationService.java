@@ -146,10 +146,10 @@ public class ApplicationService {
         return transactionService.execute("acceptApplication", 30, status -> {
                     Application application = applicationRepository.findById(applicationId)
                             .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
-
-                    Employer reviewer = employerRepository.findByUserId(userId)
-                            .orElseThrow(() -> new AccessDeniedException("Not an employer"));
-
+                    if (userId > 0) {
+                        Employer reviewer = employerRepository.findByUserId(userId)
+                                .orElseThrow(() -> new AccessDeniedException("Not an employer"));
+                    }
                     if (application.getStatus() == ApplicationStatus.PENDING
                             || application.getStatus() == ApplicationStatus.PENDING_WITH_WARNING) {
 
@@ -175,6 +175,7 @@ public class ApplicationService {
                     vacancy.getTitle()
                     );
 
+
             jmsTemplate.convertAndSend(
                     "applications.queue",
                     event,
@@ -194,10 +195,10 @@ public class ApplicationService {
 
                     Application application = applicationRepository.findById(applicationId)
                             .orElseThrow(() -> new ResourceNotFoundException("Application not found with id: " + applicationId));
-
-                    Employer reviewer = employerRepository.findByUserId(userId)
-                            .orElseThrow(() -> new AccessDeniedException("User with id " + userId + " is not registered as employer"));
-
+                    if (userId > 0) {
+                        Employer reviewer = employerRepository.findByUserId(userId)
+                                .orElseThrow(() -> new AccessDeniedException("User with id " + userId + " is not registered as employer"));
+                    }
                     if (application.getStatus() == ApplicationStatus.PENDING
                             || application.getStatus() == ApplicationStatus.PENDING_WITH_WARNING) {
 
@@ -215,9 +216,8 @@ public class ApplicationService {
                             .orElseThrow(() -> new ResourceNotFoundException(
                                     "Vacancy not found after update for application: " + applicationId));
 
-                    logger.info("Application {} rejected by employer {}. Applicant: {}, Vacancy: {}",
+                    logger.info("Application {} rejected by employer. Applicant: {}, Vacancy: {}",
                             applicationId,
-                            reviewer.getId(),
                             updated.getApplicant().getName(),
                             vacancy.getTitle());
 

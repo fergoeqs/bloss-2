@@ -4,7 +4,7 @@ volumes:
 
 services:
   dev-pg12:
-    container_name: blps3
+    container_name: bloss3
     image: postgres:17
     environment:
       POSTGRES_DB: blpsdb
@@ -30,7 +30,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.13-management
-    container_name: blps-rabbitmq
+    container_name: bloss-rabbitmq
     hostname: rabbitmq
     ports:
       - "5672:5672"   # AMQP

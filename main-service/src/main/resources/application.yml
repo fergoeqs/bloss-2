@@ -39,6 +39,14 @@ spring:
           max-attempts: 3
           initial-interval: 5000ms
 
+  quartz:
+    job-store-type: memory
+    properties:
+      org:
+        quartz:
+          threadPool:
+            threadCount: 5
+
 app:
   queue:
     application: applications.queue
