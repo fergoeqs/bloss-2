@@ -1,0 +1,53 @@
+volumes:
+  dev-db-volume: {}
+  rabbitmq-data: {}
+
+services:
+  dev-pg12:
+    container_name: bloss3
+    image: postgres:17
+    environment:
+      POSTGRES_DB: blpsdb
+      POSTGRES_USER: blps
+      POSTGRES_PASSWORD: blps
+    command:
+      - "postgres"
+      - "-c"
+      - "max_prepared_transactions=100"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+    volumes:
+      - dev-db-volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U blps -d blpsdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: bloss-rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Web UI
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+networks:
+  app-network:
+    driver: bridge

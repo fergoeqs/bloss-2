@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h1>Приглашение на собеседование</h1>
+<p>Уважаемый <span th:text="${candidateName}"></span>,</p>
+<p>Вы приглашены на собеседование по вакансии <strong th:text="${vacancyTitle}"></strong>.</p>
+<p>Дата: <span th:text="${#temporals.format(interviewDate, 'dd.MM.yyyy HH:mm')}"></span></p>
+</body>
+</html>
