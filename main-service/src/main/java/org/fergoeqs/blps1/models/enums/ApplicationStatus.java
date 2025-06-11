@@ -6,7 +6,8 @@ public enum ApplicationStatus {
     PENDING,
     PENDING_WITH_WARNING,
     ACCEPTED,
-    REJECTED;
+    REJECTED,
+    HIRED;
 
     @Override
     public String toString() {

@@ -49,4 +49,14 @@ public class EmployerController {
         ApplicationResponse updatedApplication = applicationService.rejectApplication(id, user.getId());
         return ResponseEntity.ok(updatedApplication);
     }
+
+    @PutMapping("/applications/{id}/hire")
+    @PreAuthorize("hasAnyRole('EMPLOYER_CREATOR', 'EMPLOYER_REVIEWER')")
+    public ResponseEntity<ApplicationResponse> hireApplicant(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+
+        ApplicationResponse updatedApplication = applicationService.hireApplicant(id, user.getId());
+        return ResponseEntity.ok(updatedApplication);
+    }
 }

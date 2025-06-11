@@ -126,4 +126,15 @@ public class VacancyService {
         );
     }
 
+    public void closeVacancyByIssueKey(String issueKey) {
+        Application application = applicationRepository.findByIssueKey(issueKey)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+        Vacancy vacancy = vacancyRepository.findById(application.getVacancyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Vacancy not found"));
+
+        vacancy.setStatus(VacancyStatus.CLOSED);
+        vacancyRepository.save(vacancy);
+    }
+
 }
