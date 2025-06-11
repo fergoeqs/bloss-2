@@ -2,6 +2,8 @@ package org.fergoeqs.hreventprocessor.config;
 
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import org.fergoeqs.hreventprocessor.service.JsonMessageConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,7 @@ import jakarta.jms.ConnectionFactory;
 @Configuration
 @EnableJms
 public class JMSConsumerConfig {
+    private static final Logger log = LoggerFactory.getLogger(JMSConsumerConfig.class);
 
     @Value("${spring.rabbitmq.host}")
     private String rabbitHost;
@@ -59,6 +62,11 @@ public class JMSConsumerConfig {
         factory.setSessionTransacted(true);
         factory.setConcurrency("2-5");
         factory.setMessageConverter(jsonMessageConverter);
+
+        factory.setErrorHandler(t -> {
+            log.error("Error in listener: {}", t.getMessage());
+        });
+
         return factory;
     }
 }

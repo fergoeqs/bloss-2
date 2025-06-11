@@ -74,5 +74,25 @@ public class MailService {
         mailSender.send(message);
     }
 
-}
+    public void sendHiringEmail(ApplicationStatusEvent hiring) throws MessagingException {
+        Context context = new Context();
+        context.setVariable("candidateName", hiring.candidateName());
+        context.setVariable("vacancyTitle", hiring.vacancyTitle());
 
+        String htmlContent = templateEngine.process(
+                "hiring",
+                context
+        );
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setTo(hiring.candidateEmail());
+        helper.setSubject("Поздравляем с приемом на работу!");
+        helper.setText(htmlContent, true);
+        helper.setFrom("coshkodevochka@yandex.ru");
+
+        mailSender.send(message);
+    }
+
+}

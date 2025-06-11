@@ -161,6 +161,7 @@ public class ApplicationService {
                     }
 
                     application.setStatus(ApplicationStatus.ACCEPTED);
+
                     Application updated = applicationRepository.save(application);
                     Vacancy vacancy = vacancyRepository.findById(updated.getVacancyId())
                             .orElseThrow(() -> new ResourceNotFoundException("Vacancy not found"));
@@ -169,22 +170,24 @@ public class ApplicationService {
                             updated.getApplicant().getName(),
                             vacancy.getTitle());
 
-                    ApplicationStatusEvent event = new ApplicationStatusEvent(
-                    updated.getApplicant().getMail(),
-                    updated.getApplicant().getName(),
-                    vacancy.getTitle()
+                    ApplicationStatusEvent jiraEvent = new ApplicationStatusEvent(
+                            updated.getId(),
+                            updated.getApplicant().getMail(),
+                            updated.getApplicant().getName(),
+                            vacancy.getTitle(),
+                            null,
+                            "ACCEPTED"
                     );
 
+                    jmsTemplate.convertAndSend(
+                            "applications.queue",
+                            jiraEvent,
+                            message -> {
+                                message.setJMSType("CreateJiraIssue");
+                                return message;
+                            }
+                    );
 
-            jmsTemplate.convertAndSend(
-                    "applications.queue",
-                    event,
-                    message -> {
-                        message.setJMSType("ApplicationAccepted");
-                        message.setJMSPriority(4);
-                        return message;
-                    }
-            );
                     return mapToResponse(updated);
                 }
         );
@@ -222,9 +225,12 @@ public class ApplicationService {
                             vacancy.getTitle());
 
                     ApplicationStatusEvent event = new ApplicationStatusEvent(
+                            updated.getId(),
                             updated.getApplicant().getMail(),
                             updated.getApplicant().getName(),
-                            vacancy.getTitle()
+                            vacancy.getTitle(),
+                            application.getIssueKey(),
+                            "REJECTED"
                     );
 
                     jmsTemplate.convertAndSend(
@@ -274,7 +280,8 @@ public class ApplicationService {
                 application.getCreatedAt() != null ?
                         application.getCreatedAt() : LocalDateTime.now(),
                 application.getCoverLetter(),
-                vacancy.getPendingLimit() - vacancy.getPendingCount()
+                vacancy.getPendingLimit() - vacancy.getPendingCount(),
+                application.getIssueKey()
         );
     }
 
@@ -301,5 +308,61 @@ public class ApplicationService {
                 .count();
 
         return matches >= requiredMatches;
+    }
+
+    public ApplicationResponse hireApplicant(Long applicationId, Long userId) {
+        return transactionService.execute("hireApplicant", 30, status -> {
+            Application application = applicationRepository.findById(applicationId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+            Employer reviewer = employerRepository.findByUserId(userId)
+                    .orElseThrow(() -> new AccessDeniedException("Not an employer"));
+
+            application.setStatus(ApplicationStatus.HIRED);
+            application.setLastStatusChange(LocalDateTime.now());
+
+            Vacancy vacancy = vacancyRepository.findById(application.getVacancyId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Vacancy not found"));
+
+            if (vacancy.getPendingCount() > 0) {
+                vacancy.setPendingCount(vacancy.getPendingCount() - 1);
+                vacancyRepository.save(vacancy);
+            }
+
+            Application updated = applicationRepository.save(application);
+
+            String candidateEmail = application.getApplicant().getMail();
+
+            ApplicationStatusEvent event = new ApplicationStatusEvent(
+                    applicationId,
+                    candidateEmail,
+                    application.getApplicant().getName(),
+                    vacancy.getTitle(),
+                    application.getIssueKey(),
+                    "HIRED"
+            );
+
+            jmsTemplate.convertAndSend("applications.queue", event, message -> {
+                message.setStringProperty("EventType", "StatusChanged");
+                return message;
+            });
+
+            return mapToResponse(updated);
+        });
+    }
+
+    public void updateIssueKey(Long applicationId, String issueKey) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+        application.setIssueKey(issueKey);
+        applicationRepository.save(application);
+    }
+
+
+    public void updateStatusByIssueKey(String issueKey, String status) {
+        Application application = applicationRepository.findByIssueKey(issueKey)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+        application.setStatus(ApplicationStatus.valueOf(status));
+        applicationRepository.save(application);
     }
 }

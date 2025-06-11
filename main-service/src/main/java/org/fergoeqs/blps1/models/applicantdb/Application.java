@@ -41,5 +41,11 @@ public class Application {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Column(name = "issue_key")
+    private String issueKey;
+
+    @Column(name = "last_status_change")
+    private LocalDateTime lastStatusChange;
+
 
 }

@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -87,5 +88,14 @@ public class ApplicationController {
 
         ApplicationResponse response = applicationService.addCoverLetter(id, coverLetter);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}/issue-key")
+    public ResponseEntity<?> updateIssueKey(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> request) {
+        String issueKey = request.get("issueKey");
+        applicationService.updateIssueKey(id, issueKey);
+        return ResponseEntity.ok().build();
     }
 }

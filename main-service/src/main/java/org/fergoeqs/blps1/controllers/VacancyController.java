@@ -14,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/vacancies")
 public class VacancyController {
@@ -80,5 +82,12 @@ public class VacancyController {
         return vacancyService.getVacancyById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/close-by-issue")
+    public ResponseEntity<?> closeVacancyByIssueKey(@RequestBody Map<String, String> request) {
+        String issueKey = request.get("issueKey");
+        vacancyService.closeVacancyByIssueKey(issueKey);
+        return ResponseEntity.ok().build();
     }
 }

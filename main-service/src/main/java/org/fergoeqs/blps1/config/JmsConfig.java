@@ -46,6 +46,8 @@ public class JmsConfig {
         JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
         jmsTemplate.setSessionTransacted(true);
         jmsTemplate.setMessageConverter(jsonMessageConverter);
+        jmsTemplate.setDefaultDestinationName("main.service.commands");
+
         return jmsTemplate;
     }
 
